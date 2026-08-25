@@ -1,65 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'core/network/api_client.dart';
+import 'features/auth/data/auth_repository.dart';
+import 'features/auth/providers/auth_provider.dart';
+import 'features/auth/screens/login_screen.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const LahiyarouwaApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class LahiyarouwaApp extends StatelessWidget {
+  const LahiyarouwaApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return MultiProvider(
+      providers: [
+        // ApiClient : instance unique, injectée dans chaque repository.
+        Provider<ApiClient>(create: (_) => ApiClient()),
+        ProxyProvider<ApiClient, AuthRepository>(update: (_, apiClient, _) => AuthRepository(apiClient)),
+        // Ajoute ici les repositories/providers des autres features au
+        // fur et à mesure, sur le même modèle que AuthRepository/AuthProvider.
+        ChangeNotifierProxyProvider<AuthRepository, AuthProvider>(
+          create: (context) => AuthProvider(context.read<AuthRepository>()),
+          update: (_, authRepository, previous) => previous ?? AuthProvider(authRepository),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Lahiyarouwa',
+        theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+        home: const _AppRoot(),
+      ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+/// Bascule entre l'écran de connexion et l'app une fois authentifié,
+/// et restaure la session existante (token stocké) au démarrage.
+class _AppRoot extends StatefulWidget {
+  const _AppRoot();
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<_AppRoot> createState() => _AppRootState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+class _AppRootState extends State<_AppRoot> {
+  @override
+  void initState() {
+    super.initState();
+    final authProvider = context.read<AuthProvider>();
+    context.read<ApiClient>().onUnauthorized = authProvider.forceLogout;
+    authProvider.restoreSession();
   }
 
   @override
   Widget build(BuildContext context) {
+    final status = context.watch<AuthProvider>().status;
+
+    return switch (status) {
+      AuthStatus.unknown => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      AuthStatus.unauthenticated => const LoginScreen(),
+      AuthStatus.authenticated => const _HomePlaceholder(),
+    };
+  }
+}
+
+/// Point d'accueil une fois connecté. Chaque feature (grossesse,
+/// vaccination, nutrition, ...) branchera ici son propre écran, par
+/// exemple via une bottom nav bar.
+class _HomePlaceholder extends StatelessWidget {
+  const _HomePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text('Bonjour ${authProvider.currentUser?.name ?? ''}'),
+        actions: [IconButton(onPressed: authProvider.logout, icon: const Icon(Icons.logout), tooltip: 'Déconnexion')],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+      body: const Center(
+        child: Text('Chaque feature (grossesse, vaccination, ...) branchera ici son propre écran.'),
       ),
     );
   }
