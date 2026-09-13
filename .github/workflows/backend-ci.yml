@@ -1,0 +1,50 @@
+# Template prêt à l'emploi : path-scopé à backend/, donc inoffensif tant que
+# ce dossier n'existe pas (le workflow ne se déclenche simplement jamais).
+# À activer/ajuster (nom des scripts npm, version de Node) une fois
+# backend/package.json en place — voir CLAUDE.md > Continuous Integration.
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Run tests
+        run: npm test
+        env:
+          MONGODB_URI: mongodb://localhost:27017/lahiyarouwa_test
+          NODE_ENV: test
