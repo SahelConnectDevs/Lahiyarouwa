@@ -214,6 +214,12 @@ class _SignInPageState extends State<SignInPage> {
                           backgroundColor: const Color(0xFFD81B60),
 
                           foregroundColor: Colors.white,
+                          overlayColor: const Color.fromARGB(
+                            255,
+                            36,
+                            8,
+                            251,
+                          ).withOpacity(0.20),
 
                           elevation: 2,
 

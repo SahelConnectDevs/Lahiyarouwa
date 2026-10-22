@@ -11,18 +11,23 @@ class _DdrPage extends State<DdrPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: CircularProgressIndicator.adaptive()),
+      appBar: AppBar(
+        title: Text(
+          'Date des dernieres Regles',
+          style: TextStyle(
+            color: Colors.pink,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                'Date des dernieres Regles',
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
+              SizedBox(height: 12),
               Text(
                 'indiquer le premier jour de vos derniere regles',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
@@ -63,7 +68,9 @@ class _DdrPage extends State<DdrPage> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFD81B60).withOpacity(0.08),
+                            color: const Color(
+                              0xFFD81B60,
+                            ).withValues(alpha: 0.08),
                             blurRadius: 12,
                             offset: const Offset(0, 5),
                           ),

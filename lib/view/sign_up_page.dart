@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lahiyarouwa/view/sign_in_page.dart';
 import 'package:lahiyarouwa/widgets/date_picker_widget.dart';
-import 'package:lahiyarouwa/view/home_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -189,7 +189,9 @@ class _SignUpPageState extends State<SignUpPage> {
                           if (_formkey.currentState!.validate()) {}
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomePage()),
+                            MaterialPageRoute(
+                              builder: (context) => SignInPage(),
+                            ),
                           );
                         },
 
