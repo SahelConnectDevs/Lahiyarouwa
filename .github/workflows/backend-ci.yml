@@ -1,7 +1,7 @@
-# Template prêt à l'emploi : path-scopé à backend/, donc inoffensif tant que
-# ce dossier n'existe pas (le workflow ne se déclenche simplement jamais).
-# À activer/ajuster (nom des scripts npm, version de Node) une fois
-# backend/package.json en place — voir CLAUDE.md > Continuous Integration.
+# Path-scopé à backend/, donc ne se déclenche que sur un changement dans ce
+# dossier. Les tests utilisent mongodb-memory-server (voir backend/tests) :
+# pas besoin de service Mongo ici, l'instance est éphémère et embarquée dans
+# le process de test lui-même — identique en local et en CI.
 name: Backend CI
 
 on:
@@ -23,12 +23,6 @@ jobs:
       run:
         working-directory: backend
 
-    services:
-      mongodb:
-        image: mongo:7
-        ports:
-          - 27017:27017
-
     steps:
       - uses: actions/checkout@v4
 
@@ -40,11 +34,14 @@ jobs:
 
       - run: npm ci
 
+      - name: Format check
+        run: npm run format:check
+
       - name: Lint
-        run: npm run lint --if-present
+        run: npm run lint
+
+      - name: Build (type-check)
+        run: npm run build
 
       - name: Run tests
         run: npm test
-        env:
-          MONGODB_URI: mongodb://localhost:27017/lahiyarouwa_test
-          NODE_ENV: test

@@ -7,10 +7,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This repo (`SahelConnectDevs/Lahiyarouwa`) is the root of a **monorepo** meant to eventually hold three stacks side by side:
 
 - **This Flutter mobile app** — lives directly at the repo root (`lib/`, `android/`, `ios/`, `pubspec.yaml`, ...), not in its own subfolder, since it was the first thing built here.
-- **`backend/`** — Node.js + Express + MongoDB REST API. Not created yet.
+- **`backend/`** — Node.js + Express + MongoDB REST API, TypeScript. See [Backend architecture](#backend-architecture).
 - **`admin-web/`** — the web admin back office. Not created yet; framework not chosen yet (React/Next.js/Vue are all reasonable — pick one and use it consistently rather than mixing).
 
-When either of those is created, give it its own `package.json`/lockfile and its own section in this file (commands, structure) rather than merging its conventions into the Flutter-specific sections below. The [Continuous Integration](#continuous-integration) section already has a ready-to-activate GitHub Actions workflow for each of the three stacks.
+When `admin-web/` is created, give it its own `package.json`/lockfile and its own section in this file (commands, structure) rather than merging its conventions into the Flutter- or backend-specific sections below. The [Continuous Integration](#continuous-integration) section already has a ready-to-activate GitHub Actions workflow for it.
 
 ## Commands — Mobile app (Flutter)
 
@@ -24,6 +24,34 @@ This is a Flutter/Dart project (SDK `^3.11.4`).
 - `flutter test --plain-name "<test name>"` — run a single test by name
 - `flutter build <apk|ios|web|windows|linux|macos>` — build a release artifact for a platform
 - `flutter clean` — clear build artifacts (useful when build state gets stale)
+
+## Commands — Backend (Node/Express, MongoDB)
+
+Run from `backend/` (TypeScript, Node `>=20`, npm).
+
+- `npm install` — install dependencies
+- `npm run dev` — run the API with hot-reload (`tsx watch`), reads `backend/.env` (copy from [.env.example](backend/.env.example) first)
+- `npm run build` — type-check and compile `src/` to `dist/` (also the type-check gate for CI). Uses [tsconfig.build.json](backend/tsconfig.build.json) (extends the base [tsconfig.json](backend/tsconfig.json) with `rootDir`/`outDir` and `src`-only `include`) so `dist/` mirrors `src/` flatly; the base `tsconfig.json` (which also includes `tests/`, for `ts-jest`) would otherwise make `tsc` emit a nested, wrong `dist/src/` layout — keep using `tsconfig.build.json` for any build/type-check command, not the base file.
+- `npm start` — run the compiled `dist/server.js` (production)
+- `npm run lint` — ESLint (flat config, [eslint.config.mjs](backend/eslint.config.mjs))
+- `npm run format` / `npm run format:check` — Prettier write / check
+- `npm test` — full test suite (Jest + Supertest, MongoDB provided in-memory — no local Mongo or Docker needed)
+- `npm test -- tests/auth.test.ts` — run a single test file
+- `npm test -- -t "<test name>"` — run a single test by name
+
+## Backend architecture
+
+Layered, one folder per concern under `backend/src/`, matching the mobile app's layering philosophy (thin controllers, no domain layer):
+
+`routes/` (HTTP verbs + path, wires validators/middlewares/controller) → `controllers/` (extracts `req`, calls a service, sets the HTTP response — no business logic) → `services/` (business logic, talks to Mongoose models, throws `AppError`) → `models/` (Mongoose schemas).
+
+- `src/app.ts` builds the Express app (`helmet`, `cors`, `express.json()`, mounts `routes/` under `/api`, then `notFound` + `errorHandler`) without starting a server — this is what tests import via `createApp()`. `src/server.ts` is the only place that connects to MongoDB and calls `.listen()`.
+- **Error contract with the mobile client is load-bearing** — don't change it without updating `lib/core/network/api_client.dart` too: every thrown `AppError` (`src/utils/AppError.ts`) is turned by `error.middleware.ts` into `{ message, errors? }`, where `errors` (a `{ field: reason }` map) is only present for `AppError.validation` (HTTP 422). This is exactly what `ValidationException`/`ServerException`/`UnauthorizedException` on the Flutter side expect.
+- `middlewares/validate.middleware.ts` turns `express-validator` results into that same `{ message, errors }` shape — always pair a `*.validator.ts` chain with `validate` in the route (see `routes/auth.routes.ts`).
+- `middlewares/auth.middleware.ts` — `requireAuth()` verifies the JWT and attaches `req.user` (typed via `src/types/express.d.ts`); `requireRole('admin', ...)` (used after `requireAuth()`) restricts a route by role. Roles are `user` / `relais` / `admin` on the `User` model — `admin` exists for `admin-web` to authenticate against this same API once it's built, even though this repo's mobile app never shows admin UI.
+- `middlewares/rateLimit.middleware.ts` — `loginRateLimit` (10 req/15 min/IP) is applied to `POST /auth/login` only; apply the same pattern to any other unauthenticated, guessable-credential endpoint.
+- **`features/auth` (`routes/auth.routes.ts`, `controllers/auth.controller.ts`, `services/auth.service.ts`, `models/User.ts`) is the reference implementation** — passwords hashed with `bcryptjs` (never stored/returned — `passwordHash` is `select: false` on the schema), JWT signed with `jwt.ts`. Build the other 8 domains (`grossesse`, `enfant`, `vaccination`, `nutrition`, `planning_familial`, `relais`, `alertes`, `assistant_ia`) the same way, one router mounted in `routes/index.ts` per domain, rather than growing `auth.routes.ts` or inventing a different layering per feature.
+- Tests (`backend/tests/`) spin up `mongodb-memory-server` in `beforeAll` and call `createApp()` directly with Supertest — no real network, no external MongoDB, works identically locally and in CI. See [tests/auth.test.ts](backend/tests/auth.test.ts) as the pattern for new feature tests.
 
 ## Mobile app architecture
 
@@ -72,7 +100,7 @@ Still to do before a production release, in priority order:
 1. **HTTPS only in prod** — confirm `ApiConstants._prodBaseUrl` is `https://` before building a release; never ship a build pointing at `http://`.
 2. **No sensitive logging** — if a `LogInterceptor` is ever added to `ApiClient` for local debugging, gate it behind `kDebugMode` so request/response bodies (tokens, emails, health data) never ship in a release build; never `print`/`debugPrint` a token or full API response outside of that guard.
 3. **Release build hardening** — build with `flutter build <target> --obfuscate --split-debug-info=<dir>` and keep the generated debug symbols out of version control; keep Android's default R8/ProGuard shrinking enabled in `android/app/build.gradle.kts`'s release config rather than disabling it.
-4. **Server is the source of truth** — the `validator:` checks in forms like `LoginScreen` are UX only; coordinate with the Node/Express backend on rate-limiting `/auth/login`, invalidating tokens on password change, and (for Flutter web) CORS scoped to known origins.
+4. **Server is the source of truth** — the `validator:` checks in forms like `LoginScreen` are UX only; the backend re-validates everything server-side (`backend/src/validators/`) and rate-limits `/auth/login` (`backend/src/middlewares/rateLimit.middleware.ts`). Still to coordinate: invalidating tokens on password change, and setting `backend/.env`'s `CORS_ORIGIN` to the real `admin-web` origin (not `*`) once it exists.
 5. **Dependency audit** — run `flutter pub outdated` and address anything with a known CVE before tagging a release; rely on the committed `pubspec.lock` for reproducible builds rather than floating resolution at build time.
 6. **Least-privilege native permissions** — before adding any Android/iOS permission (camera, location, notifications for `alertes`, etc.), confirm it ships with a usage-description string and is actually required by the feature that needs it.
 7. **Certificate pinning** — not implemented yet; worth adding to `ApiClient` (Dio supports pinning via a custom `HttpClientAdapter`) given this is a health app likely used over shared/public wifi.
@@ -92,7 +120,7 @@ Run in order before tagging a release:
 CI runs on GitHub Actions, one workflow per stack under [.github/workflows/](.github/workflows/), each scoped by `paths:` so a change in one stack never triggers another's pipeline:
 
 - [mobile-ci.yml](.github/workflows/mobile-ci.yml) — **active now.** Triggers on `lib/**`, `test/**`, the platform folders, and `pubspec.*`. Runs `flutter pub get` → `dart format --set-exit-if-changed .` → `flutter analyze` → `flutter test --coverage`, i.e. steps 1–3 of the [Pre-release checklist](#pre-release-checklist) above, on every push/PR to `main`.
-- [backend-ci.yml](.github/workflows/backend-ci.yml) — **template, dormant until `backend/` exists** (path-scoped to `backend/**`, so it simply never runs before that). Spins up a `mongo:7` service container, then `npm ci` → lint → `npm test` with `MONGODB_URI` pointed at that container. Adjust the lint/test script names once `backend/package.json` exists.
+- [backend-ci.yml](.github/workflows/backend-ci.yml) — **active now.** Triggers on `backend/**`. Runs `npm ci` → `npm run format:check` → `npm run lint` → `npm run build` (type-check) → `npm test`. No service container needed: tests use `mongodb-memory-server`, an ephemeral in-process MongoDB (see `backend/tests/`), identical locally and in CI.
 - [admin-web-ci.yml](.github/workflows/admin-web-ci.yml) — **template, dormant until `admin-web/` exists** (path-scoped to `admin-web/**`). Generic Node pipeline (`npm ci` → lint → build) that works unchanged for React, Next.js, or Vue — adjust once the framework is picked.
 
 Rules that apply across all three:
