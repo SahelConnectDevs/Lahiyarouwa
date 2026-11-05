@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="fr" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lahiyar Ouwa Da Yara — Suivi de grossesse et santé maternelle</title>
+    <meta
+      name="description"
+      content="Lahiyar Ouwa Da Yara accompagne les futures mamans et les jeunes mères : suivi de grossesse semaine par semaine, rappels de consultations prénatales (CPN), vaccins, compteur de contractions et conseils santé."
+    />
+    <meta name="theme-color" content="#ff2b7a" />
+    <link rel="canonical" href="https://lahiyarouwadayaro.com/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="Lahiyar Ouwa Da Yara" />
+    <meta property="og:title" content="Lahiyar Ouwa Da Yara — Suivi de grossesse et santé maternelle" />
+    <meta
+      property="og:description"
+      content="Suivi de grossesse, CPN, vaccins, contractions et conseils santé : l'application qui accompagne les mamans à chaque étape."
+    />
+    <meta property="og:url" content="https://lahiyarouwadayaro.com/" />
+    <meta property="og:image" content="https://lahiyarouwadayaro.com/assets/img/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="/assets/img/logo.png" />
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
+    <link rel="preload" as="image" href="/assets/img/maman-hero.webp" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MobileApplication",
+        "name": "Lahiyar Ouwa Da Yara",
+        "operatingSystem": "Android",
+        "applicationCategory": "HealthApplication",
+        "url": "https://lahiyarouwadayaro.com/",
+        "image": "https://lahiyarouwadayaro.com/assets/img/logo.png",
+        "inLanguage": "fr",
+        "publisher": { "@type": "Organization", "name": "SahelConnect" }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Icônes (sprite SVG inline, aucun fichier ni service externe) -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" /><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" /></symbol>
+        <symbol id="i-baby" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 0 0 5 0" /><path d="M12 3a2 2 0 0 0 0 4" /></symbol>
+        <symbol id="i-syringe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3a1 1 0 0 1-1.4 0l-2.6-2.6a1 1 0 0 1 0-1.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6" /></symbol>
+        <symbol id="i-timer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2M10 2h4M12 2v3" /></symbol>
+        <symbol id="i-apple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7c-1.5-2-5-2.2-6.5.5S5 15 7.5 18.5C9 20.6 10.5 21 12 20c1.5 1 3 .6 4.5-1.5C19 15 19.5 10 18 7.5S13.5 5 12 7Z" /><path d="M12 7c0-2 1-3.5 3-4" /></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4M12 17h.01" /></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0" /></symbol>
+        <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol>
+        <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.2A10 10 0 0 1 12 4c7 0 10 8 10 8a13 13 0 0 1-1.7 2.7M6.6 6.6A13.5 13.5 0 0 0 2 12s3 8 10 8a9.7 9.7 0 0 0 5.4-1.6M2 2l20 20M14.1 14.1a3 3 0 1 1-4.2-4.2" /></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path fill="#34a853" d="M3.6 1.8 13.8 12 3.6 22.2c-.4-.2-.6-.6-.6-1.1V2.9c0-.5.2-.9.6-1.1Z" /><path fill="#fbbc04" d="m17.2 8.6-3.4 3.4 3.4 3.4 3.9-2.2c.8-.5.8-1.7 0-2.2l-3.9-2.4Z" /><path fill="#ea4335" d="M13.8 12 3.6 22.2c.4.2.9.2 1.3 0l12.3-6.8-3.4-3.4Z" /><path fill="#4285f4" d="M3.6 1.8c.4-.2.9-.2 1.3 0l12.3 6.8-3.4 3.4L3.6 1.8Z" /></symbol>
+      </defs>
+    </svg>
+
+    <a class="skip-link" href="#contenu">Aller au contenu</a>
+    <div class="tricolor" aria-hidden="true"></div>
+
+    <header class="site-header" id="haut">
+      <nav class="container nav" aria-label="Navigation principale">
+        <a class="brand" href="/" aria-label="Lahiyar Ouwa Da Yara, accueil">
+          <img src="/assets/img/logo.webp" alt="" width="40" height="40" />
+          <span>Lahiyar Ouwa <em>Da Yara</em></span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Ouvrir le menu">
+          <span></span>
+        </button>
+        <ul class="nav-links" id="menu">
+          <li><a href="#fonctionnalites">Fonctionnalités</a></li>
+          <li><a href="#apercu">Aperçu</a></li>
+          <li><a href="#comment">Comment ça marche</a></li>
+          <li><a href="#confidentialite">Vos données</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a class="btn btn-primary" href="#telecharger">Télécharger</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="contenu">
+      <!-- ============ HERO ============ -->
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="reveal">
+            <span class="eyebrow">Santé maternelle et infantile</span>
+            <h1>Une grossesse sereine, <span class="accent">à chaque étape.</span></h1>
+            <p class="hero-lead">
+              Lahiyar Ouwa Da Yara accompagne les futures mamans et les jeunes mères : suivi de grossesse semaine
+              par semaine, rappels de consultations prénatales, vaccins, compteur de contractions et conseils
+              santé, réunis dans une seule application.
+            </p>
+            <div class="hero-cta">
+              <a class="btn btn-store" href="https://play.google.com/store/apps/details?id=com.sahelconnect.lahiyarouwa" rel="noopener">
+                <svg aria-hidden="true"><use href="#i-play" /></svg>
+                <span><small>Bientôt sur</small><strong>Google Play</strong></span>
+              </a>
+              <a class="btn btn-ghost" href="#fonctionnalites">Découvrir l'application</a>
+            </div>
+            <ul class="hero-meta">
+              <li><svg aria-hidden="true"><use href="#i-check" /></svg>Pensée pour les mamans du Sahel</li>
+              <li><svg aria-hidden="true"><use href="#i-check" /></svg>Sans publicité</li>
+              <li><svg aria-hidden="true"><use href="#i-check" /></svg>Données protégées</li>
+            </ul>
+          </div>
+
+          <div class="hero-visual reveal" aria-hidden="true">
+            <div class="blob"></div>
+            <img class="hero-img" src="/assets/img/maman-hero.webp" alt="" width="720" height="1080" fetchpriority="high" />
+            <div class="float-card one">
+              <span class="ic"><svg><use href="#i-baby" /></svg></span>
+              <span>
+                <strong>Semaine 24</strong>
+                <small>Votre bébé grandit bien</small>
+                <span class="progress"><i></i></span>
+              </span>
+            </div>
+            <img class="hero-phone" src="/assets/img/screens/accueil-phone.webp" alt="" width="400" height="901" />
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FONCTIONNALITÉS ============ -->
+      <section class="section" id="fonctionnalites">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="kicker">Fonctionnalités</span>
+            <h2>Tout ce qu'il faut pour suivre votre grossesse et votre bébé</h2>
+            <p>Des outils simples, pensés pour accompagner les mamans et non remplacer le personnel de santé.</p>
+          </div>
+
+          <div class="features">
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-baby" /></svg></div>
+              <h3>Suivi semaine par semaine</h3>
+              <p>À partir de la date de vos dernières règles, suivez l'évolution de votre bébé et la date prévue d'accouchement.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-calendar" /></svg></div>
+              <h3>Consultations prénatales</h3>
+              <p>Gardez le calendrier de vos CPN sous les yeux et recevez un rappel avant chaque rendez-vous.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-syringe" /></svg></div>
+              <h3>Carnet de vaccination</h3>
+              <p>Les vaccins recommandés pendant la grossesse et pour bébé, avec leur calendrier.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-timer" /></svg></div>
+              <h3>Compteur de contractions</h3>
+              <p>Chronométrez la durée et la fréquence de vos contractions pour savoir quand partir au centre de santé.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-apple" /></svg></div>
+              <h3>Conseils santé et nutrition</h3>
+              <p>Hydratation, alimentation riche en fer, repos : des conseils clairs pour chaque jour.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-alert" /></svg></div>
+              <h3>Signes de danger</h3>
+              <p>Reconnaître les signes qui doivent pousser à consulter rapidement, sans attendre.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-pin" /></svg></div>
+              <h3>Centres et numéros utiles</h3>
+              <p>Trouvez un centre de santé et les contacts importants en cas de besoin.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-bell" /></svg></div>
+              <h3>Rappels et alertes</h3>
+              <p>Des notifications pour ne rien oublier : rendez-vous, vaccins et conseils du moment.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ============ APERÇU (captures d'écran) ============ -->
+      <section class="section section-alt" id="apercu">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="kicker">Aperçu</span>
+            <h2>Découvrez l'application en images</h2>
+            <p>Une interface douce et claire, pensée pour être utilisée facilement au quotidien.</p>
+          </div>
+        </div>
+        <div class="gallery reveal">
+          <div class="gallery-track" id="gallery-track" tabindex="0" role="region" aria-label="Captures d'écran de l'application (faire défiler horizontalement)">
+            <img src="/assets/img/screens/accueil.webp" alt="Accueil personnalisé : semaine de grossesse, date prévue d'accouchement, prochaine CPN et prochain vaccin" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/bebe.webp" alt="Suivi du développement de bébé : poids, taille et évolution de la semaine" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/maman.webp" alt="Suivi de la santé de maman : progression de la grossesse et changements de la semaine" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/conseils.webp" alt="Conseils adaptés : alimentation, hydratation, repos et suivi prénatal" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/cpn.webp" alt="Calendrier des huit consultations prénatales recommandées" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/vaccination.webp" alt="Suivi de la vaccination : vaccins effectués et rappels à venir" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/contractions.webp" alt="Suivi des contractions : durée, intervalle moyen et signalement d'un signe inquiétant" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/espace.webp" alt="Espace personnel : profil, notifications, centres de santé, numéros utiles et paramètres" width="540" height="960" loading="lazy" />
+            <img src="/assets/img/screens/menu.webp" alt="Menu de l'application : signes de danger, urgence, langue et apparence" width="540" height="960" loading="lazy" />
+          </div>
+          <div class="gallery-nav container">
+            <button type="button" class="gallery-btn" data-dir="-1" aria-controls="gallery-track" aria-label="Captures précédentes">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <button type="button" class="gallery-btn" data-dir="1" aria-controls="gallery-track" aria-label="Captures suivantes">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MAMAN / BÉBÉ ============ -->
+      <section class="section">
+        <div class="container">
+          <div class="split">
+            <div class="split-media reveal">
+              <img class="screen" src="/assets/img/screens/bebe.webp" alt="Écran de suivi du développement de bébé : poids, taille et évolution de la semaine" width="540" height="960" loading="lazy" />
+            </div>
+            <div class="reveal">
+              <span class="kicker" style="color: var(--pink-600); font-weight: 700">Pour bébé</span>
+              <h2>Suivez le développement de votre bébé</h2>
+              <p>Chaque semaine, découvrez ce qui change pour votre bébé et ce que vous pouvez faire pour l'accompagner.</p>
+              <ul class="checklist">
+                <li>Évolution de la grossesse semaine après semaine</li>
+                <li>Date prévue d'accouchement calculée automatiquement</li>
+                <li>Calendrier de vaccination de bébé après la naissance</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="split reverse">
+            <div class="split-media reveal">
+              <img class="screen" src="/assets/img/screens/maman.webp" alt="Écran de suivi de la santé de maman : progression et changements de la semaine" width="540" height="960" loading="lazy" />
+            </div>
+            <div class="reveal">
+              <span class="kicker" style="color: var(--pink-600); font-weight: 700">Pour maman</span>
+              <h2>Prenez soin de vous, en toute simplicité</h2>
+              <p>Votre santé compte autant que celle de votre bébé. Lahiyar Ouwa Da Yara vous aide à rester attentive à vous-même.</p>
+              <ul class="checklist">
+                <li>Rappels de consultations prénatales et de vaccins</li>
+                <li>Conseils d'hydratation, de nutrition et de repos</li>
+                <li>Compteur de contractions et signes de danger à connaître</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ COMMENT ÇA MARCHE ============ -->
+      <section class="section section-alt" id="comment">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="kicker">Comment ça marche</span>
+            <h2>Commencez en trois étapes</h2>
+          </div>
+          <div class="steps">
+            <div class="step reveal">
+              <h3>Installez l'application</h3>
+              <p>Téléchargez Lahiyar Ouwa Da Yara depuis Google Play sur votre téléphone Android.</p>
+            </div>
+            <div class="step reveal">
+              <h3>Créez votre compte</h3>
+              <p>Quelques informations suffisent pour retrouver votre suivi à tout moment, en toute sécurité.</p>
+            </div>
+            <div class="step reveal">
+              <h3>Indiquez votre date de dernières règles</h3>
+              <p>L'application calcule votre terme et vous accompagne jusqu'à la naissance de bébé, et après.</p>
+            </div>
+          </div>
+
+          <div class="section-head reveal" style="margin-top: 72px; margin-bottom: 0">
+            <h3>Dans la langue de votre choix</h3>
+            <div class="langs">
+              <span class="lang">Français</span>
+              <span class="lang">Hausa</span>
+              <span class="lang">Zarma</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CONFIDENTIALITÉ ============ -->
+      <section class="section" id="confidentialite">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="kicker">Vos données</span>
+            <h2>Votre santé est privée. Nous la protégeons.</h2>
+            <p>Les informations de grossesse sont des données de santé sensibles. Nous les traitons avec le plus grand soin.</p>
+          </div>
+          <div class="trust">
+            <div class="trust-item reveal">
+              <span class="ic"><svg aria-hidden="true"><use href="#i-lock" /></svg></span>
+              <div>
+                <h3>Chiffrées et sécurisées</h3>
+                <p>Échanges chiffrés (HTTPS), mots de passe jamais stockés en clair, session protégée sur votre téléphone.</p>
+              </div>
+            </div>
+            <div class="trust-item reveal">
+              <span class="ic"><svg aria-hidden="true"><use href="#i-eye-off" /></svg></span>
+              <div>
+                <h3>Jamais vendues</h3>
+                <p>Aucune publicité, aucun traceur publicitaire. Vos données ne sont ni vendues ni louées.</p>
+              </div>
+            </div>
+            <div class="trust-item reveal">
+              <span class="ic"><svg aria-hidden="true"><use href="#i-trash" /></svg></span>
+              <div>
+                <h3>Vous gardez la main</h3>
+                <p>Consultez, corrigez ou supprimez votre compte et vos données quand vous le souhaitez.</p>
+              </div>
+            </div>
+          </div>
+          <p class="trust-more reveal">
+            <a class="btn btn-ghost" href="/confidentialite">Lire la politique de confidentialité</a>
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ FAQ ============ -->
+      <section class="section section-alt" id="faq">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="kicker">Questions fréquentes</span>
+            <h2>Vous avez des questions ?</h2>
+          </div>
+          <div class="faq">
+            <details class="reveal">
+              <summary>L'application remplace-t-elle une sage-femme ou un médecin ?</summary>
+              <p>
+                Non. Lahiyar Ouwa Da Yara est un outil d'information et d'accompagnement. Elle ne pose pas de diagnostic et ne
+                remplace pas les consultations prénatales. En cas de doute ou de signe de danger, rendez-vous
+                immédiatement dans un centre de santé.
+              </p>
+            </details>
+            <details class="reveal">
+              <summary>Sur quels téléphones fonctionne l'application ?</summary>
+              <p>Lahiyar Ouwa Da Yara est disponible pour les téléphones Android, via Google Play.</p>
+            </details>
+            <details class="reveal">
+              <summary>Qui peut voir mes informations de grossesse ?</summary>
+              <p>
+                Vous seule, depuis votre compte. Nos équipes techniques n'y accèdent que lorsque c'est strictement
+                nécessaire au fonctionnement ou à la sécurité du service. Rien n'est partagé à des fins
+                publicitaires. Tous les détails figurent dans notre
+                <a href="/confidentialite">politique de confidentialité</a>.
+              </p>
+            </details>
+            <details class="reveal">
+              <summary>Comment supprimer mon compte et mes données ?</summary>
+              <p>
+                Vous pouvez demander la suppression de votre compte et de toutes les données associées à tout
+                moment. La marche à suivre est expliquée sur la page
+                <a href="/suppression-compte">Supprimer mon compte</a>.
+              </p>
+            </details>
+            <details class="reveal">
+              <summary>Comment vous contacter ?</summary>
+              <p>Écrivez-nous à <a href="mailto:contact@lahiyarouwadayaro.com">contact@lahiyarouwadayaro.com</a>, nous vous répondrons au plus vite.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ TÉLÉCHARGER ============ -->
+      <section class="section" id="telecharger">
+        <div class="container">
+          <div class="cta-band reveal">
+            <div>
+              <h2>Accompagnez votre grossesse dès aujourd'hui</h2>
+              <p>Lahiyar Ouwa Da Yara arrive très bientôt sur Google Play. Votre compagne de grossesse, toujours dans votre poche.</p>
+              <a class="btn btn-store" href="https://play.google.com/store/apps/details?id=com.sahelconnect.lahiyarouwa" rel="noopener">
+                <svg aria-hidden="true"><use href="#i-play" /></svg>
+                <span><small>Bientôt sur</small><strong>Google Play</strong></span>
+              </a>
+            </div>
+            <div class="cta-logo"><img src="/assets/img/logo-full.webp" alt="Logo Lahiyar Ouwa Da Yara, santé maternelle et infantile" width="600" height="692" loading="lazy" /></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <a class="brand" href="/">
+              <img src="/assets/img/logo.webp" alt="" width="40" height="40" />
+              <span>Lahiyar Ouwa <em>Da Yara</em></span>
+            </a>
+            <p>L'application de suivi de grossesse et de santé maternelle et infantile, développée par SahelConnect.</p>
+          </div>
+          <div>
+            <h4>Application</h4>
+            <ul>
+              <li><a href="/#fonctionnalites">Fonctionnalités</a></li>
+              <li><a href="/#comment">Comment ça marche</a></li>
+              <li><a href="/#faq">FAQ</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Légal et contact</h4>
+            <ul>
+              <li><a href="/confidentialite">Politique de confidentialité</a></li>
+              <li><a href="/suppression-compte">Supprimer mon compte</a></li>
+              <li><a href="mailto:contact@lahiyarouwadayaro.com">contact@lahiyarouwadayaro.com</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="disclaimer">
+          Les informations fournies par Lahiyar Ouwa Da Yara sont données à titre indicatif et ne remplacent pas l'avis d'un
+          professionnel de santé. En cas d'urgence, rendez-vous immédiatement au centre de santé le plus proche.
+        </p>
+        <div class="footer-bottom">
+          <span>© <span data-year>2026</span> SahelConnect. Tous droits réservés.</span>
+          <span>Google Play est une marque de Google LLC.</span>
+        </div>
+      </div>
+    </footer>
+
+    <script src="/assets/js/main.js" defer></script>
+  </body>
+</html>
