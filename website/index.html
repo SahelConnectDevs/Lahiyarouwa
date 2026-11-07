@@ -3,21 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Lahiyar Ouwa Da Yara — Suivi de grossesse et santé maternelle</title>
+    <title>Lahiyar Ouwa Da Yaro — Planification familiale et santé maternelle au Niger</title>
     <meta
       name="description"
-      content="Lahiyar Ouwa Da Yara accompagne les futures mamans et les jeunes mères : suivi de grossesse semaine par semaine, rappels de consultations prénatales (CPN), vaccins, compteur de contractions et conseils santé."
+      content="Lahiyar Ouwa Da Yaro, écosystème numérique de santé maternelle et de planification familiale porté par l'ONG CCCP AHASKÉ au Niger : information sur les méthodes, rappels, langues locales, message vocal et accompagnement par des agents communautaires."
     />
-    <meta name="theme-color" content="#ff2b7a" />
+    <meta name="theme-color" content="#16884a" />
     <link rel="canonical" href="https://lahiyarouwadayaro.com/" />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
-    <meta property="og:site_name" content="Lahiyar Ouwa Da Yara" />
-    <meta property="og:title" content="Lahiyar Ouwa Da Yara — Suivi de grossesse et santé maternelle" />
+    <meta property="og:site_name" content="Lahiyar Ouwa Da Yaro" />
+    <meta property="og:title" content="Lahiyar Ouwa Da Yaro — Planification familiale et santé maternelle au Niger" />
     <meta
       property="og:description"
-      content="Suivi de grossesse, CPN, vaccins, contractions et conseils santé : l'application qui accompagne les mamans à chaque étape."
+      content="La santé numérique au service des femmes, des familles et des communautés nigériennes. Projet pilote : 500 femmes, 30 agents communautaires."
     />
     <meta property="og:url" content="https://lahiyarouwadayaro.com/" />
     <meta property="og:image" content="https://lahiyarouwadayaro.com/assets/img/og-image.jpg" />
@@ -28,38 +28,44 @@
     <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png" />
     <link rel="preload" as="image" href="/assets/img/maman-hero.webp" />
     <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/pf.css" />
 
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "MobileApplication",
-        "name": "Lahiyar Ouwa Da Yara",
+        "name": "Lahiyar Ouwa Da Yaro",
         "operatingSystem": "Android",
         "applicationCategory": "HealthApplication",
         "url": "https://lahiyarouwadayaro.com/",
         "image": "https://lahiyarouwadayaro.com/assets/img/logo.png",
-        "inLanguage": "fr",
-        "publisher": { "@type": "Organization", "name": "SahelConnect" }
+        "inLanguage": ["fr", "ha", "dje"],
+        "publisher": { "@type": "Organization", "name": "ONG CCCP AHASKÉ" }
       }
     </script>
   </head>
-  <body>
+  <body class="pf">
     <!-- Icônes (sprite SVG inline, aucun fichier ni service externe) -->
     <svg width="0" height="0" style="position: absolute" aria-hidden="true">
       <defs>
         <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></symbol>
-        <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3" /><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" /></symbol>
-        <symbol id="i-baby" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 0 0 5 0" /><path d="M12 3a2 2 0 0 0 0 4" /></symbol>
-        <symbol id="i-syringe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 2 4 4M17 7l3-3M19 9 8.7 19.3a1 1 0 0 1-1.4 0l-2.6-2.6a1 1 0 0 1 0-1.4L15 5M9 11l4 4M5 19l-3 3M14 4l6 6" /></symbol>
-        <symbol id="i-timer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2M10 2h4M12 2v3" /></symbol>
-        <symbol id="i-apple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7c-1.5-2-5-2.2-6.5.5S5 15 7.5 18.5C9 20.6 10.5 21 12 20c1.5 1 3 .6 4.5-1.5C19 15 19.5 10 18 7.5S13.5 5 12 7Z" /><path d="M12 7c0-2 1-3.5 3-4" /></symbol>
-        <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4M12 17h.01" /></symbol>
-        <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></symbol>
+        <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5v14ZM20 17v4H6.5A2.5 2.5 0 0 1 4 18.5" /></symbol>
+        <symbol id="i-veil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.9 17.9A10 10 0 0 1 12 20c-7 0-10-8-10-8a17.6 17.6 0 0 1 4.1-5.9M9.9 4.2A9 9 0 0 1 12 4c7 0 10 8 10 8a17 17 0 0 1-2.2 3.2M2 2l20 20" /></symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5" /><path d="M11 18h2" /></symbol>
+        <symbol id="i-call" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z" /></symbol>
+        <symbol id="i-steth" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v6a5 5 0 0 0 10 0V3M5 3H4M15 3h1M10 14v2a5 5 0 0 0 10 0v-2" /><circle cx="20" cy="12" r="2" /></symbol>
         <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0" /></symbol>
+        <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3ZM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z" /></symbol>
+        <symbol id="i-head" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6" /><path d="M21 19a2 2 0 0 1-2 2h-1v-6h3v4ZM3 19a2 2 0 0 0 2 2h1v-6H3v4Z" /></symbol>
+        <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3" /><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8" /></symbol>
+        <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" /></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /></symbol>
+        <symbol id="i-route" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="19" r="3" /><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15" /><circle cx="18" cy="5" r="3" /></symbol>
         <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></symbol>
-        <symbol id="i-eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.2A10 10 0 0 1 12 4c7 0 10 8 10 8a13 13 0 0 1-1.7 2.7M6.6 6.6A13.5 13.5 0 0 0 2 12s3 8 10 8a9.7 9.7 0 0 0 5.4-1.6M2 2l20 20M14.1 14.1a3 3 0 1 1-4.2-4.2" /></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /><path d="m9 12 2 2 4-4" /></symbol>
         <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" /></symbol>
-        <symbol id="i-play" viewBox="0 0 24 24"><path fill="#34a853" d="M3.6 1.8 13.8 12 3.6 22.2c-.4-.2-.6-.6-.6-1.1V2.9c0-.5.2-.9.6-1.1Z" /><path fill="#fbbc04" d="m17.2 8.6-3.4 3.4 3.4 3.4 3.9-2.2c.8-.5.8-1.7 0-2.2l-3.9-2.4Z" /><path fill="#ea4335" d="M13.8 12 3.6 22.2c.4.2.9.2 1.3 0l12.3-6.8-3.4-3.4Z" /><path fill="#4285f4" d="M3.6 1.8c.4-.2.9-.2 1.3 0l12.3 6.8-3.4 3.4L3.6 1.8Z" /></symbol>
+        <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-8 10-8 10 8 10 8-3 8-10 8-10-8-10-8Z" /><circle cx="12" cy="12" r="3" /></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></symbol>
       </defs>
     </svg>
 
@@ -68,20 +74,20 @@
 
     <header class="site-header" id="haut">
       <nav class="container nav" aria-label="Navigation principale">
-        <a class="brand" href="/" aria-label="Lahiyar Ouwa Da Yara, accueil">
+        <a class="brand" href="/" aria-label="Lahiyar Ouwa Da Yaro, accueil">
           <img src="/assets/img/logo.webp" alt="" width="40" height="40" />
-          <span>Lahiyar Ouwa <em>Da Yara</em></span>
+          <span>Lahiyar Ouwa <em>Da Yaro</em></span>
         </a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="menu" aria-label="Ouvrir le menu">
           <span></span>
         </button>
         <ul class="nav-links" id="menu">
-          <li><a href="#fonctionnalites">Fonctionnalités</a></li>
-          <li><a href="#apercu">Aperçu</a></li>
-          <li><a href="#comment">Comment ça marche</a></li>
-          <li><a href="#confidentialite">Vos données</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a class="btn btn-primary" href="#telecharger">Télécharger</a></li>
+          <li><a href="#defi">Le défi</a></li>
+          <li><a href="#parcours">Le parcours</a></li>
+          <li><a href="#methodes">Méthodes</a></li>
+          <li><a href="#ecosysteme">Écosystème</a></li>
+          <li><a href="#securite">Sécurité</a></li>
+          <li><a class="btn btn-primary" href="#pilote">Projet pilote</a></li>
         </ul>
       </nav>
     </header>
@@ -91,24 +97,21 @@
       <section class="hero">
         <div class="container hero-grid">
           <div class="reveal">
-            <span class="eyebrow">Santé maternelle et infantile</span>
-            <h1>Une grossesse sereine, <span class="accent">à chaque étape.</span></h1>
+            <span class="eyebrow">Projet pilote · Niger · ONG CCCP AHASKÉ</span>
+            <h1>La planification familiale, <span class="accent">à portée de voix</span> pour chaque femme.</h1>
             <p class="hero-lead">
-              Lahiyar Ouwa Da Yara accompagne les futures mamans et les jeunes mères : suivi de grossesse semaine
-              par semaine, rappels de consultations prénatales, vaccins, compteur de contractions et conseils
-              santé, réunis dans une seule application.
+              Lahiyar Ouwa Da Yaro est un écosystème numérique de santé maternelle et de planification familiale. Il relie
+              la femme, l'application, une intelligence artificielle d'assistance, les agents communautaires et les
+              professionnels de santé, même sans Internet et même sans savoir lire.
             </p>
             <div class="hero-cta">
-              <a class="btn btn-store" href="https://play.google.com/store/apps/details?id=com.sahelconnect.lahiyarouwa" rel="noopener">
-                <svg aria-hidden="true"><use href="#i-play" /></svg>
-                <span><small>Bientôt sur</small><strong>Google Play</strong></span>
-              </a>
-              <a class="btn btn-ghost" href="#fonctionnalites">Découvrir l'application</a>
+              <a class="btn btn-primary" href="#parcours">Suivre le parcours <svg aria-hidden="true" class="btn-ic"><use href="#i-arrow" /></svg></a>
+              <a class="btn btn-ghost" href="#methodes">Les méthodes au Niger</a>
             </div>
-            <ul class="hero-meta">
-              <li><svg aria-hidden="true"><use href="#i-check" /></svg>Pensée pour les mamans du Sahel</li>
-              <li><svg aria-hidden="true"><use href="#i-check" /></svg>Sans publicité</li>
-              <li><svg aria-hidden="true"><use href="#i-check" /></svg>Données protégées</li>
+            <ul class="kpis" aria-label="Objectifs du projet pilote">
+              <li><strong>500</strong><span>femmes accompagnées</span></li>
+              <li><strong>30</strong><span>agents communautaires</span></li>
+              <li><strong>3</strong><span>langues : français, hausa, zarma</span></li>
             </ul>
           </div>
 
@@ -116,271 +119,487 @@
             <div class="blob"></div>
             <img class="hero-img" src="/assets/img/maman-hero.webp" alt="" width="720" height="1080" fetchpriority="high" />
             <div class="float-card one">
-              <span class="ic"><svg><use href="#i-baby" /></svg></span>
+              <span class="ic"><svg><use href="#i-bell" /></svg></span>
               <span>
-                <strong>Semaine 24</strong>
-                <small>Votre bébé grandit bien</small>
-                <span class="progress"><i></i></span>
+                <strong>Rappel : injection</strong>
+                <small>Rendez-vous au centre dans 5 jours</small>
+                <span class="tag-dev">Maquette</span>
               </span>
             </div>
-            <img class="hero-phone" src="/assets/img/screens/accueil-phone.webp" alt="" width="400" height="901" />
+            <div class="float-card two">
+              <span class="ic orange"><svg><use href="#i-mic" /></svg></span>
+              <span>
+                <strong>Message vocal envoyé</strong>
+                <small>Votre agent vous rappelle</small>
+                <span class="tag-dev">Maquette</span>
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- ============ FONCTIONNALITÉS ============ -->
-      <section class="section" id="fonctionnalites">
+      <!-- ============ LÉGENDE DES STATUTS ============ -->
+      <div class="container">
+        <div class="legend reveal">
+          <p><strong>Transparence sur l'avancement.</strong> Chaque étape indique son état réel :</p>
+          <ul>
+            <li><span class="status ok">Disponible</span>déjà présent dans l'application, en phase de test</li>
+            <li><span class="status dev">En développement</span>prévu pour le projet pilote ; les écrans montrés sont des maquettes</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ============ 1. LE DÉFI ============ -->
+      <section class="section" id="defi">
         <div class="container">
           <div class="section-head reveal">
-            <span class="kicker">Fonctionnalités</span>
-            <h2>Tout ce qu'il faut pour suivre votre grossesse et votre bébé</h2>
-            <p>Des outils simples, pensés pour accompagner les mamans et non remplacer le personnel de santé.</p>
+            <span class="kicker">01 · Le défi</span>
+            <h2>Une information de santé encore hors de portée</h2>
+            <p>
+              Prenons Aïcha (personnage fictif), 24 ans, mère d'un enfant de 8 mois, dans un village du Niger. Elle voudrait
+              espacer sa prochaine grossesse. Trois obstacles se dressent devant elle.
+            </p>
           </div>
-
-          <div class="features">
+          <div class="features three">
             <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-baby" /></svg></div>
-              <h3>Suivi semaine par semaine</h3>
-              <p>À partir de la date de vos dernières règles, suivez l'évolution de votre bébé et la date prévue d'accouchement.</p>
+              <div class="ic"><svg aria-hidden="true"><use href="#i-route" /></svg></div>
+              <h3>L'accès à l'information</h3>
+              <p>Le centre de santé est loin, le temps de consultation est court, et les informations fiables sur les méthodes circulent peu.</p>
             </article>
             <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-calendar" /></svg></div>
-              <h3>Consultations prénatales</h3>
-              <p>Gardez le calendrier de vos CPN sous les yeux et recevez un rappel avant chaque rendez-vous.</p>
+              <div class="ic"><svg aria-hidden="true"><use href="#i-book" /></svg></div>
+              <h3>L'illettrisme</h3>
+              <p>Une brochure ou une application uniquement écrite reste muette pour une femme qui ne lit pas, ou pas le français.</p>
             </article>
             <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-syringe" /></svg></div>
-              <h3>Carnet de vaccination</h3>
-              <p>Les vaccins recommandés pendant la grossesse et pour bébé, avec leur calendrier.</p>
-            </article>
-            <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-timer" /></svg></div>
-              <h3>Compteur de contractions</h3>
-              <p>Chronométrez la durée et la fréquence de vos contractions pour savoir quand partir au centre de santé.</p>
-            </article>
-            <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-apple" /></svg></div>
-              <h3>Conseils santé et nutrition</h3>
-              <p>Hydratation, alimentation riche en fer, repos : des conseils clairs pour chaque jour.</p>
-            </article>
-            <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-alert" /></svg></div>
-              <h3>Signes de danger</h3>
-              <p>Reconnaître les signes qui doivent pousser à consulter rapidement, sans attendre.</p>
-            </article>
-            <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-pin" /></svg></div>
-              <h3>Centres et numéros utiles</h3>
-              <p>Trouvez un centre de santé et les contacts importants en cas de besoin.</p>
-            </article>
-            <article class="feature reveal">
-              <div class="ic"><svg aria-hidden="true"><use href="#i-bell" /></svg></div>
-              <h3>Rappels et alertes</h3>
-              <p>Des notifications pour ne rien oublier : rendez-vous, vaccins et conseils du moment.</p>
+              <div class="ic"><svg aria-hidden="true"><use href="#i-veil" /></svg></div>
+              <h3>Les tabous sociaux</h3>
+              <p>Parler de contraception reste délicat en famille comme en public. Beaucoup de questions restent sans réponse, faute d'un espace discret.</p>
             </article>
           </div>
         </div>
       </section>
 
-
-      <!-- ============ APERÇU (captures d'écran) ============ -->
-      <section class="section section-alt" id="apercu">
+      <!-- ============ 2–11. LE PARCOURS ============ -->
+      <section class="section section-alt" id="parcours">
         <div class="container">
           <div class="section-head reveal">
-            <span class="kicker">Aperçu</span>
-            <h2>Découvrez l'application en images</h2>
-            <p>Une interface douce et claire, pensée pour être utilisée facilement au quotidien.</p>
-          </div>
-        </div>
-        <div class="gallery reveal">
-          <div class="gallery-track" id="gallery-track" tabindex="0" role="region" aria-label="Captures d'écran de l'application (faire défiler horizontalement)">
-            <img src="/assets/img/screens/accueil.webp" alt="Accueil personnalisé : semaine de grossesse, date prévue d'accouchement, prochaine CPN et prochain vaccin" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/bebe.webp" alt="Suivi du développement de bébé : poids, taille et évolution de la semaine" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/maman.webp" alt="Suivi de la santé de maman : progression de la grossesse et changements de la semaine" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/conseils.webp" alt="Conseils adaptés : alimentation, hydratation, repos et suivi prénatal" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/cpn.webp" alt="Calendrier des huit consultations prénatales recommandées" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/vaccination.webp" alt="Suivi de la vaccination : vaccins effectués et rappels à venir" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/contractions.webp" alt="Suivi des contractions : durée, intervalle moyen et signalement d'un signe inquiétant" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/espace.webp" alt="Espace personnel : profil, notifications, centres de santé, numéros utiles et paramètres" width="540" height="960" loading="lazy" />
-            <img src="/assets/img/screens/menu.webp" alt="Menu de l'application : signes de danger, urgence, langue et apparence" width="540" height="960" loading="lazy" />
-          </div>
-          <div class="gallery-nav container">
-            <button type="button" class="gallery-btn" data-dir="-1" aria-controls="gallery-track" aria-label="Captures précédentes">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6" /></svg>
-            </button>
-            <button type="button" class="gallery-btn" data-dir="1" aria-controls="gallery-track" aria-label="Captures suivantes">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ MAMAN / BÉBÉ ============ -->
-      <section class="section">
-        <div class="container">
-          <div class="split">
-            <div class="split-media reveal">
-              <img class="screen" src="/assets/img/screens/bebe.webp" alt="Écran de suivi du développement de bébé : poids, taille et évolution de la semaine" width="540" height="960" loading="lazy" />
-            </div>
-            <div class="reveal">
-              <span class="kicker" style="color: var(--pink-600); font-weight: 700">Pour bébé</span>
-              <h2>Suivez le développement de votre bébé</h2>
-              <p>Chaque semaine, découvrez ce qui change pour votre bébé et ce que vous pouvez faire pour l'accompagner.</p>
-              <ul class="checklist">
-                <li>Évolution de la grossesse semaine après semaine</li>
-                <li>Date prévue d'accouchement calculée automatiquement</li>
-                <li>Calendrier de vaccination de bébé après la naissance</li>
-              </ul>
-            </div>
+            <span class="kicker">02 – 11 · Le parcours</span>
+            <h2>Le parcours d'Aïcha, étape par étape</h2>
+            <p>À chaque étape, une action concrète du système et ce qu'elle change pour la femme.</p>
           </div>
 
-          <div class="split reverse">
-            <div class="split-media reveal">
-              <img class="screen" src="/assets/img/screens/maman.webp" alt="Écran de suivi de la santé de maman : progression et changements de la semaine" width="540" height="960" loading="lazy" />
-            </div>
-            <div class="reveal">
-              <span class="kicker" style="color: var(--pink-600); font-weight: 700">Pour maman</span>
-              <h2>Prenez soin de vous, en toute simplicité</h2>
-              <p>Votre santé compte autant que celle de votre bébé. Lahiyar Ouwa Da Yara vous aide à rester attentive à vous-même.</p>
-              <ul class="checklist">
-                <li>Rappels de consultations prénatales et de vaccins</li>
-                <li>Conseils d'hydratation, de nutrition et de repos</li>
-                <li>Compteur de contractions et signes de danger à connaître</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ COMMENT ÇA MARCHE ============ -->
-      <section class="section section-alt" id="comment">
-        <div class="container">
-          <div class="section-head reveal">
-            <span class="kicker">Comment ça marche</span>
-            <h2>Commencez en trois étapes</h2>
-          </div>
-          <div class="steps">
-            <div class="step reveal">
-              <h3>Installez l'application</h3>
-              <p>Téléchargez Lahiyar Ouwa Da Yara depuis Google Play sur votre téléphone Android.</p>
-            </div>
-            <div class="step reveal">
-              <h3>Créez votre compte</h3>
-              <p>Quelques informations suffisent pour retrouver votre suivi à tout moment, en toute sécurité.</p>
-            </div>
-            <div class="step reveal">
-              <h3>Indiquez votre date de dernières règles</h3>
-              <p>L'application calcule votre terme et vous accompagne jusqu'à la naissance de bébé, et après.</p>
-            </div>
-          </div>
-
-          <div class="section-head reveal" style="margin-top: 72px; margin-bottom: 0">
-            <h3>Dans la langue de votre choix</h3>
-            <div class="langs">
-              <span class="lang">Français</span>
-              <span class="lang">Hausa</span>
-              <span class="lang">Zarma</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============ CONFIDENTIALITÉ ============ -->
-      <section class="section" id="confidentialite">
-        <div class="container">
-          <div class="section-head reveal">
-            <span class="kicker">Vos données</span>
-            <h2>Votre santé est privée. Nous la protégeons.</h2>
-            <p>Les informations de grossesse sont des données de santé sensibles. Nous les traitons avec le plus grand soin.</p>
-          </div>
-          <div class="trust">
-            <div class="trust-item reveal">
-              <span class="ic"><svg aria-hidden="true"><use href="#i-lock" /></svg></span>
-              <div>
-                <h3>Chiffrées et sécurisées</h3>
-                <p>Échanges chiffrés (HTTPS), mots de passe jamais stockés en clair, session protégée sur votre téléphone.</p>
+          <ol class="journey">
+            <!-- 02 ACCÈS -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">02</span>
+                <h3>Accès : smartphone ou simple téléphone</h3>
+                <div class="jstatus"><span class="status ok">Application Android : disponible</span><span class="status dev">Serveur vocal (SVI) : en développement</span></div>
+                <p class="action"><strong>Action.</strong> Aïcha ouvre Lahiyar Ouwa Da Yaro sur son smartphone. Sa voisine, qui n'a qu'un téléphone classique et pas d'Internet, appelle le Système Vocal Interactif et navigue en tapant sur les touches.</p>
+                <p class="result"><strong>Résultat.</strong> Les mêmes informations de santé, que l'on ait ou non un smartphone, du crédit Internet ou la capacité de lire.</p>
               </div>
-            </div>
-            <div class="trust-item reveal">
-              <span class="ic"><svg aria-hidden="true"><use href="#i-eye-off" /></svg></span>
-              <div>
-                <h3>Jamais vendues</h3>
-                <p>Aucune publicité, aucun traceur publicitaire. Vos données ne sont ni vendues ni louées.</p>
+              <div class="jvisual duo">
+                <img class="mock-shot" src="/assets/img/screens/accueil-phone.webp" alt="Écran d'accueil réel de l'application Lahiyar Ouwa Da Yaro" width="400" height="901" loading="lazy" />
+                <div class="ui feature-phone" role="img" aria-label="Maquette du serveur vocal sur téléphone classique">
+                  <span class="mock-label">Maquette SVI</span>
+                  <div class="fp-screen"><small>Appel en cours</small><strong>Lahiyar Ouwa</strong><span>« Pour la planification familiale, tapez 1 »</span></div>
+                  <div class="fp-keys" aria-hidden="true"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></div>
+                </div>
               </div>
-            </div>
-            <div class="trust-item reveal">
-              <span class="ic"><svg aria-hidden="true"><use href="#i-trash" /></svg></span>
-              <div>
-                <h3>Vous gardez la main</h3>
-                <p>Consultez, corrigez ou supprimez votre compte et vos données quand vous le souhaitez.</p>
+            </li>
+
+            <!-- 03 INFORMATION -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">03</span>
+                <h3>Information : les méthodes disponibles au Niger</h3>
+                <div class="jstatus"><span class="status dev">En développement</span></div>
+                <p class="action"><strong>Action.</strong> Aïcha ouvre la rubrique Planification familiale. Pour chaque méthode, l'application présente la durée de protection, les avantages et les effets secondaires possibles, à lire ou à écouter.</p>
+                <p class="result"><strong>Résultat.</strong> Une information claire et validée par des professionnels, consultée en toute discrétion, chez elle. <a href="#methodes">Voir les méthodes</a></p>
               </div>
-            </div>
+              <div class="jvisual">
+                <div class="ui">
+                  <span class="mock-label">Maquette</span>
+                  <div class="ui-bar">Planification familiale</div>
+                  <div class="ui-row"><span class="dot g"></span><span><strong>Implant</strong><small>3 à 5 ans · très efficace</small></span><svg aria-hidden="true"><use href="#i-arrow" /></svg></div>
+                  <div class="ui-row"><span class="dot g"></span><span><strong>Injectable</strong><small>Tous les 3 mois</small></span><svg aria-hidden="true"><use href="#i-arrow" /></svg></div>
+                  <div class="ui-row"><span class="dot o"></span><span><strong>Pilule</strong><small>Chaque jour</small></span><svg aria-hidden="true"><use href="#i-arrow" /></svg></div>
+                  <div class="ui-row"><span class="dot o"></span><span><strong>Collier du cycle</strong><small>Sans hormones</small></span><svg aria-hidden="true"><use href="#i-arrow" /></svg></div>
+                  <div class="ui-listen"><svg aria-hidden="true"><use href="#i-head" /></svg>Écouter en hausa</div>
+                </div>
+              </div>
+            </li>
+
+            <!-- 04 CHOIX ÉCLAIRÉ -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">04</span>
+                <h3>Choix éclairé, avec un professionnel de santé</h3>
+                <div class="jstatus"><span class="status dev">En développement</span></div>
+                <p class="action"><strong>Action.</strong> Aïcha compare deux méthodes qui l'intéressent, les garde en favoris, puis en parle avec la sage-femme du centre de santé, qui vérifie qu'elles conviennent à sa santé.</p>
+                <p class="result"><strong>Résultat.</strong> Le choix appartient à Aïcha, et il est confirmé par un professionnel. L'application prépare la consultation, elle ne la remplace pas.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui compare">
+                  <span class="mock-label">Maquette</span>
+                  <div class="ui-bar">Mes méthodes à discuter</div>
+                  <div class="cmp">
+                    <div><strong>Injectable</strong><small>Tous les 3 mois</small><small>Discrète</small></div>
+                    <div><strong>Implant</strong><small>3 à 5 ans</small><small>Rien à penser</small></div>
+                  </div>
+                  <div class="ui-note"><svg aria-hidden="true"><use href="#i-steth" /></svg>À valider avec la sage-femme du CSI</div>
+                </div>
+              </div>
+            </li>
+
+            <!-- 05 SUIVI PERSONNALISÉ -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">05</span>
+                <h3>Suivi personnalisé : des rappels adaptés à la méthode</h3>
+                <div class="jstatus"><span class="status dev">En développement</span></div>
+                <p class="action"><strong>Action.</strong> La méthode choisie est enregistrée, et les rappels se programment automatiquement : une prise par jour pour la pilule, un rendez-vous tous les 3 mois pour l'injection, la date de retrait ou de remplacement pour l'implant ou le DIU.</p>
+                <p class="result"><strong>Résultat.</strong> Aïcha n'oublie plus de prise ni de rendez-vous de renouvellement, sans rien avoir à calculer elle-même.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui">
+                  <span class="mock-label">Maquette</span>
+                  <div class="ui-bar">Ma méthode : injectable</div>
+                  <div class="reminder"><span class="ic"><svg aria-hidden="true"><use href="#i-bell" /></svg></span><span><strong>Prochaine injection</strong><small>Dans 5 jours · CSI du village</small></span></div>
+                  <div class="timeline-mini" aria-hidden="true"><i class="done"></i><i class="done"></i><i class="now"></i><i></i></div>
+                  <small class="ui-foot">Rappel par notification, ou par appel vocal sur téléphone classique</small>
+                </div>
+              </div>
+            </li>
+
+            <!-- 06 IA -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">06</span>
+                <h3>Intelligence artificielle : des conseils personnalisés</h3>
+                <div class="jstatus"><span class="status dev">En développement</span></div>
+                <p class="action"><strong>Action.</strong> À partir des informations qu'Aïcha a choisi de partager (méthode, allaitement, âge de son enfant), l'IA sélectionne des conseils en planification familiale, en nutrition et en santé maternelle.</p>
+                <p class="result"><strong>Résultat.</strong> Des conseils adaptés à sa situation, tirés d'une bibliothèque validée par des professionnels. L'IA ne pose aucun diagnostic et ne prescrit rien.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui ai">
+                  <span class="mock-label">Maquette</span>
+                  <div class="ai-in"><span>Injectable</span><span>Allaite</span><span>Enfant 8 mois</span></div>
+                  <div class="ai-core" aria-hidden="true"><svg><use href="#i-spark" /></svg></div>
+                  <div class="ai-out">
+                    <div><b>PF</b>Votre injection est compatible avec l'allaitement.</div>
+                    <div><b>Nutrition</b>À 8 mois, bébé mange aussi des bouillies enrichies.</div>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+            <!-- 07 LANGUES -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">07</span>
+                <h3>Langues locales : des podcasts en hausa et en zarma</h3>
+                <div class="jstatus"><span class="status dev">En développement</span></div>
+                <p class="action"><strong>Action.</strong> Les podcasts santé, conçus en français, sont traduits en hausa et en zarma, puis relus avant publication. Aïcha choisit sa langue et écoute.</p>
+                <p class="result"><strong>Résultat.</strong> L'information passe par l'oreille, dans la langue du foyer, sans avoir besoin de savoir lire.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui">
+                  <span class="mock-label">Maquette</span>
+                  <div class="lang-tabs" aria-hidden="true"><span>Français</span><span class="on">Hausa</span><span>Zarma</span></div>
+                  <div class="player">
+                    <span class="play" aria-hidden="true"></span>
+                    <span><strong>Espacer les naissances</strong><small>Épisode 3 · 4 min</small></span>
+                  </div>
+                  <div class="wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                </div>
+              </div>
+            </li>
+
+            <!-- 08 EXPRESSION VOCALE -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">08</span>
+                <h3>Expression vocale : parler plutôt qu'écrire</h3>
+                <div class="jstatus"><span class="status dev">Message vocal : en développement</span><span class="status ok">Signaler un signe inquiétant : disponible</span></div>
+                <p class="action"><strong>Action.</strong> Depuis l'injection, Aïcha a des saignements irréguliers qui l'inquiètent. Elle appuie sur le micro et l'explique dans sa langue.</p>
+                <p class="result"><strong>Résultat.</strong> Pas besoin d'écrire pour être entendue. Aujourd'hui déjà, l'application permet de signaler un signe inquiétant en le choisissant dans une liste.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui voice">
+                  <span class="mock-label">Maquette</span>
+                  <div class="ui-bar">Parler à mon agent</div>
+                  <div class="rec" aria-hidden="true"><span class="rec-btn"><svg><use href="#i-mic" /></svg></span></div>
+                  <div class="wave live" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                  <small class="ui-foot">0:24 · en hausa</small>
+                </div>
+              </div>
+            </li>
+
+            <!-- 09 TRANSMISSION -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">09</span>
+                <h3>Transmission : de la voix à une alerte utile</h3>
+                <div class="jstatus"><span class="status dev">En développement</span></div>
+                <p class="action"><strong>Action.</strong> Le message vocal est transcrit, puis résumé en quelques lignes. Une alerte part automatiquement vers l'agent communautaire de son secteur.</p>
+                <p class="result"><strong>Résultat.</strong> L'agent sait, sans réécouter tout le message, qui contacter, pour quel sujet et avec quelle priorité. L'enregistrement original reste disponible.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui flow">
+                  <span class="mock-label">Maquette</span>
+                  <div class="flow-step"><svg aria-hidden="true"><use href="#i-mic" /></svg><small>Message vocal</small></div>
+                  <span class="flow-arrow" aria-hidden="true"></span>
+                  <div class="flow-step summary"><strong>Synthèse</strong><small>Saignements irréguliers depuis l'injection. Souhaite un conseil.</small><span class="prio">Priorité : à rappeler sous 48 h</span></div>
+                  <span class="flow-arrow" aria-hidden="true"></span>
+                  <div class="flow-step"><svg aria-hidden="true"><use href="#i-send" /></svg><small>Alerte à l'agent</small></div>
+                </div>
+              </div>
+            </li>
+
+            <!-- 10 TABLEAU DE BORD -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">10</span>
+                <h3>Tableau de bord de l'agent communautaire</h3>
+                <div class="jstatus"><span class="status dev">En développement</span></div>
+                <p class="action"><strong>Action.</strong> Moussa, l'agent communautaire du secteur, reçoit la notification. Il consulte la liste de ses bénéficiaires, leurs besoins et les rappels de suivi du jour.</p>
+                <p class="result"><strong>Résultat.</strong> Il organise sa journée selon les priorités, sans carnet papier. Il ne voit que les femmes de son secteur.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui dash">
+                  <span class="mock-label">Maquette</span>
+                  <div class="ui-bar">Mes bénéficiaires · aujourd'hui <span class="badge-n">3</span></div>
+                  <div class="dash-row alert"><span class="av">A</span><span><strong>Aïcha</strong><small>Message vocal · effets de l'injection</small></span><span class="pill o">À rappeler</span></div>
+                  <div class="dash-row"><span class="av">H</span><span><strong>Hadiza</strong><small>Renouvellement de pilule</small></span><span class="pill g">Rappel</span></div>
+                  <div class="dash-row"><span class="av">R</span><span><strong>Ramatou</strong><small>CPN 3 à programmer</small></span><span class="pill g">Suivi</span></div>
+                </div>
+              </div>
+            </li>
+
+            <!-- 11 ACCOMPAGNEMENT -->
+            <li class="jstep reveal">
+              <div class="jtext">
+                <span class="jnum">11</span>
+                <h3>Accompagnement humain et orientation</h3>
+                <div class="jstatus"><span class="status dev">Suivi dans l'application : en développement</span></div>
+                <p class="action"><strong>Action.</strong> Moussa appelle Aïcha, la rassure, et l'oriente vers la sage-femme du centre de santé pour un rendez-vous. Il note le suivi effectué.</p>
+                <p class="result"><strong>Résultat.</strong> La boucle est bouclée, de la question d'Aïcha à la consultation. Personne n'est laissée sans réponse.</p>
+              </div>
+              <div class="jvisual">
+                <div class="ui">
+                  <span class="mock-label">Maquette</span>
+                  <div class="call"><span class="ic"><svg aria-hidden="true"><use href="#i-call" /></svg></span><span><strong>Appel avec Aïcha</strong><small>3 min 40</small></span></div>
+                  <div class="ui-row"><span class="dot g"></span><span><strong>Orientée vers le CSI</strong><small>Rendez-vous avec la sage-femme jeudi</small></span></div>
+                  <div class="ui-row"><span class="dot g"></span><span><strong>Alerte clôturée</strong><small>Suivi noté par l'agent</small></span></div>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ MÉTHODES ============ -->
+      <section class="section" id="methodes">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="kicker">Information · séquence 03</span>
+            <h2>Les méthodes de planification familiale au Niger</h2>
+            <p>
+              Un aperçu du contenu prévu dans le module Planification familiale. Toutes ces méthodes sont proposées dans les
+              centres de santé du pays. Le choix se fait toujours avec un professionnel de santé.
+            </p>
           </div>
-          <p class="trust-more reveal">
-            <a class="btn btn-ghost" href="/confidentialite">Lire la politique de confidentialité</a>
+
+          <div class="filters reveal" role="group" aria-label="Filtrer les méthodes">
+            <button type="button" class="chip on" data-filter="all" aria-pressed="true">Toutes</button>
+            <button type="button" class="chip" data-filter="longue" aria-pressed="false">Longue durée</button>
+            <button type="button" class="chip" data-filter="courte" aria-pressed="false">Courte durée</button>
+            <button type="button" class="chip" data-filter="sans-hormone" aria-pressed="false">Sans hormones</button>
+          </div>
+
+          <div class="methods">
+            <article class="method reveal" data-tags="longue">
+              <header><h3>Implant</h3><span class="eff high">Très efficace</span></header>
+              <p class="meta">Petit bâtonnet sous la peau du bras · 3 à 5 ans selon le modèle</p>
+              <details><summary>Avantages</summary><ul><li>Rien à penser au quotidien</li><li>Retrait possible à tout moment, avec un retour rapide de la fertilité</li><li>Compatible avec l'allaitement</li></ul></details>
+              <details><summary>Effets secondaires possibles</summary><ul><li>Règles irrégulières, plus rares ou absentes</li><li>Maux de tête</li><li>Légère douleur au point de pose</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-bell" /></svg>Rappel prévu : date de retrait ou de remplacement</p>
+            </article>
+
+            <article class="method reveal" data-tags="longue sans-hormone">
+              <header><h3>DIU au cuivre</h3><span class="eff high">Très efficace</span></header>
+              <p class="meta">Petit dispositif placé dans l'utérus · jusqu'à 10 ans et plus</p>
+              <details><summary>Avantages</summary><ul><li>Sans hormones</li><li>Très longue durée, retrait possible à tout moment</li><li>Compatible avec l'allaitement</li></ul></details>
+              <details><summary>Effets secondaires possibles</summary><ul><li>Règles plus abondantes ou plus douloureuses, surtout les premiers mois</li><li>Crampes après la pose</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-bell" /></svg>Rappel prévu : visite de contrôle et date de fin</p>
+            </article>
+
+            <article class="method reveal" data-tags="courte">
+              <header><h3>Injectable</h3><span class="eff mid">Efficace</span></header>
+              <p class="meta">Une injection tous les 3 mois, au centre ou en auto-injection après formation</p>
+              <details><summary>Avantages</summary><ul><li>Discrète : rien à garder chez soi</li><li>Quatre rendez-vous par an seulement</li><li>Compatible avec l'allaitement</li></ul></details>
+              <details><summary>Effets secondaires possibles</summary><ul><li>Règles irrégulières ou absentes</li><li>Prise de poids possible</li><li>Retour de la fertilité parfois retardé de quelques mois après l'arrêt</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-bell" /></svg>Rappel prévu : avant chaque injection</p>
+            </article>
+
+            <article class="method reveal" data-tags="courte">
+              <header><h3>Pilule</h3><span class="eff mid">Efficace</span></header>
+              <p class="meta">Un comprimé chaque jour, à heure régulière</p>
+              <details><summary>Avantages</summary><ul><li>Arrêt possible à tout moment, avec un retour rapide de la fertilité</li><li>Règles souvent plus régulières</li><li>Une pilule adaptée existe pendant l'allaitement</li></ul></details>
+              <details><summary>Effets secondaires possibles</summary><ul><li>Petits saignements entre les règles les premiers mois</li><li>Nausées, maux de tête, seins sensibles</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-bell" /></svg>Rappel prévu : chaque jour, et pour renouveler la plaquette</p>
+            </article>
+
+            <article class="method reveal" data-tags="courte sans-hormone">
+              <header><h3>Préservatif</h3><span class="eff low">Efficace s'il est bien utilisé</span></header>
+              <p class="meta">Masculin ou féminin · à chaque rapport</p>
+              <details><summary>Avantages</summary><ul><li>Seule méthode qui protège aussi des IST et du VIH</li><li>Sans hormones, sans consultation</li><li>Implique le partenaire</li></ul></details>
+              <details><summary>Effets secondaires possibles</summary><ul><li>Très rares : irritation ou allergie au latex</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-head" /></svg>Conseils d'utilisation en audio</p>
+            </article>
+
+            <article class="method reveal" data-tags="courte sans-hormone">
+              <header><h3>Allaitement (MAMA)</h3><span class="eff mid">Efficace sous 3 conditions</span></header>
+              <p class="meta">Méthode de l'allaitement maternel et de l'aménorrhée · jusqu'aux 6 mois du bébé</p>
+              <details><summary>Avantages</summary><ul><li>Gratuite et naturelle</li><li>Bonne pour la santé du bébé</li></ul></details>
+              <details><summary>Conditions et limites</summary><ul><li>Allaitement exclusif, jour et nuit</li><li>Pas de retour des règles</li><li>Bébé de moins de 6 mois : au-delà, il faut passer à une autre méthode</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-bell" /></svg>Rappel prévu : choisir une autre méthode avant les 6 mois</p>
+            </article>
+
+            <article class="method reveal" data-tags="courte sans-hormone">
+              <header><h3>Collier du cycle</h3><span class="eff low">Efficace s'il est bien utilisé</span></header>
+              <p class="meta">Méthode des jours fixes, pour les cycles réguliers de 26 à 32 jours</p>
+              <details><summary>Avantages</summary><ul><li>Sans hormones ni effets secondaires</li><li>Aide à mieux connaître son cycle</li><li>Implique le couple</li></ul></details>
+              <details><summary>Conditions et limites</summary><ul><li>Pas de rapport non protégé du 8<sup>e</sup> au 19<sup>e</sup> jour du cycle</li><li>Ne convient pas si les cycles sont irréguliers</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-bell" /></svg>Rappel prévu : début des jours fertiles</p>
+            </article>
+
+            <article class="method reveal" data-tags="courte">
+              <header><h3>Contraception d'urgence</h3><span class="eff mid">Après un rapport non protégé</span></header>
+              <p class="meta">Pilule à prendre le plus tôt possible, au plus tard dans les 3 à 5 jours selon le type</p>
+              <details><summary>À savoir</summary><ul><li>Ne remplace pas une méthode régulière</li><li>Ne provoque pas d'avortement</li></ul></details>
+              <details><summary>Effets secondaires possibles</summary><ul><li>Nausées, fatigue</li><li>Règles un peu en avance ou en retard</li></ul></details>
+              <p class="rem"><svg aria-hidden="true"><use href="#i-steth" /></svg>Orientation vers une méthode régulière</p>
+            </article>
+          </div>
+
+          <p class="fineprint reveal">
+            Informations générales, inspirées des recommandations de l'Organisation mondiale de la santé. Le contenu final du
+            module sera validé par les professionnels de santé partenaires du projet. Il ne remplace pas une consultation.
           </p>
         </div>
       </section>
 
-      <!-- ============ FAQ ============ -->
-      <section class="section section-alt" id="faq">
+      <!-- ============ ÉCOSYSTÈME ============ -->
+      <section class="section section-alt" id="ecosysteme">
         <div class="container">
           <div class="section-head reveal">
-            <span class="kicker">Questions fréquentes</span>
-            <h2>Vous avez des questions ?</h2>
+            <span class="kicker">Écosystème</span>
+            <h2>Cinq acteurs, un seul parcours</h2>
+            <p>Chaque acteur a un rôle précis. La technologie relie les personnes, elle ne remplace ni l'agent ni le soignant.</p>
           </div>
-          <div class="faq">
-            <details class="reveal">
-              <summary>L'application remplace-t-elle une sage-femme ou un médecin ?</summary>
-              <p>
-                Non. Lahiyar Ouwa Da Yara est un outil d'information et d'accompagnement. Elle ne pose pas de diagnostic et ne
-                remplace pas les consultations prénatales. En cas de doute ou de signe de danger, rendez-vous
-                immédiatement dans un centre de santé.
-              </p>
-            </details>
-            <details class="reveal">
-              <summary>Sur quels téléphones fonctionne l'application ?</summary>
-              <p>Lahiyar Ouwa Da Yara est disponible pour les téléphones Android, via Google Play.</p>
-            </details>
-            <details class="reveal">
-              <summary>Qui peut voir mes informations de grossesse ?</summary>
-              <p>
-                Vous seule, depuis votre compte. Nos équipes techniques n'y accèdent que lorsque c'est strictement
-                nécessaire au fonctionnement ou à la sécurité du service. Rien n'est partagé à des fins
-                publicitaires. Tous les détails figurent dans notre
-                <a href="/confidentialite">politique de confidentialité</a>.
-              </p>
-            </details>
-            <details class="reveal">
-              <summary>Comment supprimer mon compte et mes données ?</summary>
-              <p>
-                Vous pouvez demander la suppression de votre compte et de toutes les données associées à tout
-                moment. La marche à suivre est expliquée sur la page
-                <a href="/suppression-compte">Supprimer mon compte</a>.
-              </p>
-            </details>
-            <details class="reveal">
-              <summary>Comment vous contacter ?</summary>
-              <p>Écrivez-nous à <a href="mailto:contact@lahiyarouwadayaro.com">contact@lahiyarouwadayaro.com</a>, nous vous répondrons au plus vite.</p>
-            </details>
+
+          <ol class="eco reveal">
+            <li><span class="eco-ic"><svg aria-hidden="true"><use href="#i-users" /></svg></span><strong>La bénéficiaire</strong><small>S'informe, choisit, pose ses questions par la voix</small></li>
+            <li><span class="eco-ic"><svg aria-hidden="true"><use href="#i-phone" /></svg></span><strong>L'application et le SVI</strong><small>Informent, rappellent, recueillent les messages</small></li>
+            <li><span class="eco-ic orange"><svg aria-hidden="true"><use href="#i-spark" /></svg></span><strong>L'IA d'assistance</strong><small>Personnalise les conseils, résume, priorise</small></li>
+            <li><span class="eco-ic"><svg aria-hidden="true"><use href="#i-route" /></svg></span><strong>L'agent communautaire</strong><small>Rappelle, écoute, oriente, assure le suivi</small></li>
+            <li><span class="eco-ic"><svg aria-hidden="true"><use href="#i-steth" /></svg></span><strong>Le professionnel de santé</strong><small>Conseille, prescrit, supervise les contenus</small></li>
+          </ol>
+
+          <div class="principle reveal">
+            <div class="principle-ic"><svg aria-hidden="true"><use href="#i-spark" /></svg></div>
+            <div>
+              <h3>L'intelligence artificielle assiste, elle ne remplace pas</h3>
+              <ul class="checks">
+                <li><svg aria-hidden="true"><use href="#i-check" /></svg>Elle choisit des conseils dans une bibliothèque validée par des professionnels ; elle n'invente pas de contenu médical.</li>
+                <li><svg aria-hidden="true"><use href="#i-check" /></svg>Elle ne pose aucun diagnostic et ne prescrit aucune méthode.</li>
+                <li><svg aria-hidden="true"><use href="#i-check" /></svg>Elle résume et priorise les messages : la décision de rappeler et d'orienter revient toujours à l'agent et au soignant.</li>
+                <li><svg aria-hidden="true"><use href="#i-check" /></svg>Ses règles de priorisation sont définies et revues par l'équipe médicale du projet.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- ============ TÉLÉCHARGER ============ -->
-      <section class="section" id="telecharger">
+      <!-- ============ 12. SÉCURITÉ ============ -->
+      <section class="section" id="securite">
         <div class="container">
-          <div class="cta-band reveal">
-            <div>
-              <h2>Accompagnez votre grossesse dès aujourd'hui</h2>
-              <p>Lahiyar Ouwa Da Yara arrive très bientôt sur Google Play. Votre compagne de grossesse, toujours dans votre poche.</p>
-              <a class="btn btn-store" href="https://play.google.com/store/apps/details?id=com.sahelconnect.lahiyarouwa" rel="noopener">
-                <svg aria-hidden="true"><use href="#i-play" /></svg>
-                <span><small>Bientôt sur</small><strong>Google Play</strong></span>
-              </a>
-            </div>
-            <div class="cta-logo"><img src="/assets/img/logo-full.webp" alt="Logo Lahiyar Ouwa Da Yara, santé maternelle et infantile" width="600" height="692" loading="lazy" /></div>
+          <div class="section-head reveal">
+            <span class="kicker">12 · Sécurité et supervision</span>
+            <h2>Des données de santé protégées, une supervision médicale</h2>
+            <p>Parler de planification familiale exige une confiance totale. Elle se construit dès la conception.</p>
           </div>
+          <div class="features three">
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-lock" /></svg></div>
+              <h3>Échanges chiffrés <span class="status ok">Disponible</span></h3>
+              <p>Toutes les communications passent en HTTPS. Les mots de passe ne sont jamais stockés en clair et la session est conservée dans le coffre sécurisé du téléphone.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-eye" /></svg></div>
+              <h3>Accès limité <span class="status dev">En développement</span></h3>
+              <p>Chaque agent ne verra que les bénéficiaires de son secteur, et uniquement les informations utiles au suivi.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-trash" /></svg></div>
+              <h3>Droit à l'effacement <span class="status ok">Disponible</span></h3>
+              <p>Chaque femme peut supprimer son compte et toutes ses données. Aucune publicité, aucune revente de données.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-steth" /></svg></div>
+              <h3>Supervision médicale</h3>
+              <p>Les contenus, les traductions et les règles d'alerte sont validés par des professionnels de santé avant publication.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-shield" /></svg></div>
+              <h3>Consentement explicite</h3>
+              <p>Les données de santé ne sont collectées qu'avec l'accord de la femme. Elle choisit ce qu'elle partage avec son agent.</p>
+            </article>
+            <article class="feature reveal">
+              <div class="ic"><svg aria-hidden="true"><use href="#i-veil" /></svg></div>
+              <h3>Discrétion <span class="status dev">En développement</span></h3>
+              <p>Des notifications aux intitulés neutres, qui n'affichent pas la méthode sur l'écran verrouillé, pour protéger la vie privée au sein du foyer.</p>
+            </article>
+          </div>
+          <p class="center reveal"><a class="btn btn-ghost" href="/confidentialite">Lire la politique de confidentialité</a></p>
+        </div>
+      </section>
+
+      <!-- ============ PROJET PILOTE ============ -->
+      <section class="section section-alt" id="pilote">
+        <div class="container">
+          <div class="section-head reveal">
+            <span class="kicker">Impact · projet pilote</span>
+            <h2>Les objectifs du projet pilote</h2>
+          </div>
+          <div class="impact reveal">
+            <div class="impact-num"><strong>500</strong><span>femmes accompagnées en planification familiale et en santé maternelle</span></div>
+            <div class="impact-num"><strong>30</strong><span>agents communautaires équipés du tableau de bord de suivi</span></div>
+          </div>
+
+          <div class="partners reveal">
+            <figure>
+              <img class="ngo-logo" src="/assets/img/cccp-ahaske.webp" alt="Logo de l'ONG CCCP AHASKÉ" width="600" height="436" loading="lazy" />
+              <figcaption><strong>ONG CCCP AHASKÉ</strong><br />Porteur du projet</figcaption>
+            </figure>
+            <figure>
+              <img src="/assets/img/logo-full.webp" alt="Logo Lahiyar Ouwa Da Yaro, santé maternelle et infantile" width="600" height="692" loading="lazy" />
+              <figcaption><strong>Lahiyar Ouwa Da Yaro</strong><br />La solution numérique</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ MESSAGE FINAL ============ -->
+      <section class="section final">
+        <div class="container">
+          <blockquote class="final-quote reveal">
+            <p><strong>Lahiyar Ouwa Da Yaro</strong> : la santé numérique au service des femmes, des familles et des communautés nigériennes.</p>
+          </blockquote>
+          <p class="center reveal"><a class="btn btn-light" href="mailto:contact@lahiyarouwadayaro.com?subject=Projet%20Lahiyar%20Ouwa%20Da%20Yaro">Nous contacter</a></p>
         </div>
       </section>
     </main>
@@ -391,16 +610,16 @@
           <div>
             <a class="brand" href="/">
               <img src="/assets/img/logo.webp" alt="" width="40" height="40" />
-              <span>Lahiyar Ouwa <em>Da Yara</em></span>
+              <span>Lahiyar Ouwa <em>Da Yaro</em></span>
             </a>
-            <p>L'application de suivi de grossesse et de santé maternelle et infantile, développée par SahelConnect.</p>
+            <p>Écosystème numérique de santé maternelle et de planification familiale, porté par l'ONG CCCP AHASKÉ au Niger.</p>
           </div>
           <div>
-            <h4>Application</h4>
+            <h4>Le projet</h4>
             <ul>
-              <li><a href="/#fonctionnalites">Fonctionnalités</a></li>
-              <li><a href="/#comment">Comment ça marche</a></li>
-              <li><a href="/#faq">FAQ</a></li>
+              <li><a href="/#parcours">Le parcours</a></li>
+              <li><a href="/#methodes">Les méthodes</a></li>
+              <li><a href="/#pilote">Le projet pilote</a></li>
             </ul>
           </div>
           <div>
@@ -413,16 +632,17 @@
           </div>
         </div>
         <p class="disclaimer">
-          Les informations fournies par Lahiyar Ouwa Da Yara sont données à titre indicatif et ne remplacent pas l'avis d'un
+          Les informations fournies par Lahiyar Ouwa Da Yaro sont données à titre indicatif et ne remplacent pas l'avis d'un
           professionnel de santé. En cas d'urgence, rendez-vous immédiatement au centre de santé le plus proche.
         </p>
         <div class="footer-bottom">
-          <span>© <span data-year>2026</span> SahelConnect. Tous droits réservés.</span>
-          <span>Google Play est une marque de Google LLC.</span>
+          <span>© <span data-year>2026</span> Lahiyar Ouwa Da Yaro · ONG CCCP AHASKÉ</span>
+          <span>Personnages et écrans « Maquette » à titre illustratif.</span>
         </div>
       </div>
     </footer>
 
     <script src="/assets/js/main.js" defer></script>
+    <script src="/assets/js/pf.js" defer></script>
   </body>
 </html>
