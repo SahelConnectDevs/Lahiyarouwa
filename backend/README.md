@@ -177,14 +177,26 @@ npm run create-admin -- --email admin@lahiyarouwadayaro.com --name "Ton nom"
 
 ### Exploitation
 
-| Besoin                          | Commande (sur le VPS)                                                                                             |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| État de l'API                   | `pm2 status` · `curl https://api.lahiyarouwadayaro.com/health`                                                    |
-| Journaux                        | `pm2 logs lahiyarouwa-api`                                                                                        |
-| Redémarrer                      | `pm2 reload lahiyarouwa-api`                                                                                      |
-| Revenir à la version précédente | `ln -sfn releases/<ancienne> current && pm2 reload lahiyarouwa-api` (dans `/var/www/api.lahiyarouwadayaro.com`)   |
-| Sauvegardes                     | Activer les sauvegardes dans Atlas (automatiques sur les offres payantes). Sur M0, faire un `mongodump` régulier. |
+| Besoin                          | Commande (sur le VPS)                                                                                           |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| État de l'API                   | `pm2 status` · `curl https://api.lahiyarouwadayaro.com/health`                                                  |
+| Journaux                        | `pm2 logs lahiyarouwa-api`                                                                                      |
+| Redémarrer                      | `pm2 reload lahiyarouwa-api`                                                                                    |
+| Revenir à la version précédente | `ln -sfn releases/<ancienne> current && pm2 reload lahiyarouwa-api` (dans `/var/www/api.lahiyarouwadayaro.com`) |
+
+### Sauvegardes de la base
+
+L'offre gratuite d'Atlas (M0) ne sauvegarde rien : le VPS fait donc lui-même une sauvegarde complète **chaque nuit à 02:30**, sans outil à installer (script Node `src/scripts/backup.ts`, documents en EJSON compressés).
+
+- Installation, une fois, en tant que `deploy` sur le VPS (après un déploiement) :
+  `bash /var/www/api.lahiyarouwadayaro.com/current/deploy/install-backup-cron.sh` (le script est livré avec chaque déploiement). Il fait aussitôt une première sauvegarde pour vérifier.
+- Fichiers : `/var/www/api.lahiyarouwadayaro.com/shared/backups/lahiyarouwa-AAAAMMJJ-HHMMSS.ejson.gz` (dossier `700`, fichiers `600`), **14 dernières** gardées ; journal dans `backup.log` du même dossier.
+- Sauvegarde manuelle : `cd /var/www/api.lahiyarouwadayaro.com/current && BACKUP_DIR=/var/www/api.lahiyarouwadayaro.com/shared/backups npm run backup`.
+- Vérifier une sauvegarde sans rien modifier : `npm run restore -- <fichier>`.
+- Restaurer (**remplace** le contenu des collections sauvegardées dans la base de `MONGODB_URI`) : `npm run restore -- <fichier> --confirm`. De préférence vers une base de test d'abord (`MONGODB_URI=... npm run restore -- ...`).
+
+⚠️ Ces sauvegardes restent sur le VPS : elles protègent contre une erreur ou une suppression dans la base, pas contre la perte du serveur. Copier régulièrement le dossier ailleurs (ex. `scp deploy@IP:/var/www/api.lahiyarouwadayaro.com/shared/backups/*.gz .`) — ce sont des données de santé : les conserver chiffrées et hors de tout dossier partagé.
 
 ### Côté app mobile
 
-Avant de compiler la version de production, mettre `ApiConstants._prodBaseUrl` à `https://api.lahiyarouwadayaro.com/api` dans `lib/core/constants/api_constants.dart`.
+L'app vise l'API en ligne (`https://api.lahiyarouwadayaro.com/api`) par défaut, en debug comme en release : voir `lib/core/constants/api_constants.dart` (surcharge possible avec `--dart-define=API_BASE_URL=...`).
