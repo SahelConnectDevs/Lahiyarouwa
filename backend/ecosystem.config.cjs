@@ -20,5 +20,25 @@ module.exports = {
       kill_timeout: 10000,
       time: true,
     },
+    {
+      // Sauvegarde de la base (src/scripts/backup.ts) chaque nuit à 02:30,
+      // heure du serveur. PM2 plutôt que cron : rien à installer en root, et
+      // la tâche suit `current` à chaque déploiement (qui la relance aussi,
+      // donc une sauvegarde est faite juste après chaque mise en ligne).
+      // Statut « stopped » entre deux exécutions : c'est normal.
+      name: 'lahiyarouwa-backup',
+      cwd: '/var/www/api.lahiyarouwadayaro.com/current',
+      script: 'dist/scripts/backup.js',
+      exec_mode: 'fork',
+      instances: 1,
+      cron_restart: '30 2 * * *',
+      autorestart: false,
+      env: {
+        NODE_ENV: 'production',
+        BACKUP_DIR: '/var/www/api.lahiyarouwadayaro.com/shared/backups',
+        BACKUP_KEEP: '14',
+      },
+      time: true,
+    },
   ],
 };

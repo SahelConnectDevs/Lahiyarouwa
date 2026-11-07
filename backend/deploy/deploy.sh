@@ -23,7 +23,7 @@ echo "→ Build local"
 (cd "$API_DIR" && npm ci && npm run build)
 
 echo "→ Envoi de la release $RELEASE vers $TARGET:$BASE"
-tar -C "$API_DIR" -czf - dist package.json package-lock.json ecosystem.config.cjs deploy/install-backup-cron.sh |
+tar -C "$API_DIR" -czf - dist package.json package-lock.json ecosystem.config.cjs |
   ssh "$TARGET" "set -euo pipefail
     test -s '$BASE/shared/.env' || { echo '✗ $BASE/shared/.env manquant ou vide (voir README).'; exit 1; }
     mkdir -p '$BASE/releases/$RELEASE'

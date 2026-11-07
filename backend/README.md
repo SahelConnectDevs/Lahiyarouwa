@@ -188,9 +188,9 @@ npm run create-admin -- --email admin@lahiyarouwadayaro.com --name "Ton nom"
 
 L'offre gratuite d'Atlas (M0) ne sauvegarde rien : le VPS fait donc lui-même une sauvegarde complète **chaque nuit à 02:30**, sans outil à installer (script Node `src/scripts/backup.ts`, documents en EJSON compressés).
 
-- Installation, une fois, en tant que `deploy` sur le VPS (après un déploiement) :
-  `bash /var/www/api.lahiyarouwadayaro.com/current/deploy/install-backup-cron.sh` (le script est livré avec chaque déploiement). Il fait aussitôt une première sauvegarde pour vérifier.
-- Fichiers : `/var/www/api.lahiyarouwadayaro.com/shared/backups/lahiyarouwa-AAAAMMJJ-HHMMSS.ejson.gz` (dossier `700`, fichiers `600`), **14 dernières** gardées ; journal dans `backup.log` du même dossier.
+- Planification : application PM2 `lahiyarouwa-backup` déclarée dans `ecosystem.config.cjs` (`cron_restart`), donc installée et mise à jour par chaque `deploy.sh` — rien à faire à la main, pas de cron système (absent du Debian minimal) ni de droit root. Chaque déploiement déclenche aussi une sauvegarde.
+- Statut `stopped` dans `pm2 status` entre deux exécutions : normal. Journal : `pm2 logs lahiyarouwa-backup --lines 20 --nostream`.
+- Fichiers : `/var/www/api.lahiyarouwadayaro.com/shared/backups/lahiyarouwa-AAAAMMJJ-HHMMSS.ejson.gz` (dossier `700`, fichiers `600`), **14 dernières** gardées.
 - Sauvegarde manuelle : `cd /var/www/api.lahiyarouwadayaro.com/current && BACKUP_DIR=/var/www/api.lahiyarouwadayaro.com/shared/backups npm run backup`.
 - Vérifier une sauvegarde sans rien modifier : `npm run restore -- <fichier>`.
 - Restaurer (**remplace** le contenu des collections sauvegardées dans la base de `MONGODB_URI`) : `npm run restore -- <fichier> --confirm`. De préférence vers une base de test d'abord (`MONGODB_URI=... npm run restore -- ...`).
