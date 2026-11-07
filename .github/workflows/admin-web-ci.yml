@@ -1,7 +1,5 @@
-# Template prêt à l'emploi : path-scopé à admin-web/, donc inoffensif tant
-# que ce dossier n'existe pas. Écrit pour un outillage Node générique
-# (npm ci / lint / build) qui convient à React, Next.js ou Vue — ajuste les
-# scripts npm une fois le framework choisi. Voir CLAUDE.md > Continuous Integration.
+# admin-web (React + Vite) : lint (oxlint), tests (Vitest), type-check + build.
+# Path-scopé à admin-web/. Voir CLAUDE.md > Continuous Integration.
 name: Admin Web CI
 
 on:
@@ -28,14 +26,17 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
           cache-dependency-path: admin-web/package-lock.json
 
       - run: npm ci
 
       - name: Lint
-        run: npm run lint --if-present
+        run: npm run lint
+
+      - name: Tests
+        run: npm test
 
       - name: Build
         run: npm run build
