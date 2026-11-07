@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lahiyarouwa/view/sign_in_page.dart';
-import 'package:lahiyarouwa/widgets/Elevated_button_widget.dart';
+import 'package:lahiyarouwa/widgets/elevated_button_widget.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -33,8 +33,10 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
+  // push (et non pushReplacement) : l'accueil reste l'écran racine de
+  // _AppRoot, qui vide la pile une fois la connexion réussie.
   void skip() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const SignInPage()),
     );

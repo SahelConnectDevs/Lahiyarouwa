@@ -13,7 +13,9 @@ sealed class AppException implements Exception {
 
 /// Pas de connexion, timeout, ou hôte injoignable.
 class NetworkException extends AppException {
-  const NetworkException([super.message = 'Impossible de contacter le serveur. Vérifie ta connexion.']);
+  const NetworkException([
+    super.message = 'Impossible de contacter le serveur. Vérifie ta connexion.',
+  ]);
 }
 
 /// Réponse 4xx/5xx du backend Express sans catégorie plus précise,
@@ -26,7 +28,9 @@ class ServerException extends AppException {
 
 /// 401/403 — token absent, invalide ou expiré.
 class UnauthorizedException extends AppException {
-  const UnauthorizedException([super.message = 'Session expirée, reconnecte-toi.']);
+  const UnauthorizedException([
+    super.message = 'Session expirée, reconnecte-toi.',
+  ]);
 }
 
 /// 400/422 avec erreurs de validation par champ (format classique

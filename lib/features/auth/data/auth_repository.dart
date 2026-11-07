@@ -1,5 +1,6 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/network/endpoints.dart';
+import '../../../core/utils/dates.dart';
 import 'models/user_model.dart';
 
 /// Parle au backend Express pour l'authentification.
@@ -13,10 +14,41 @@ class AuthRepository {
 
   final ApiClient _apiClient;
 
-  Future<UserModel> login({required String email, required String password}) async {
-    final response = await _apiClient.post(ApiEndpoints.auth.login, data: {'email': email, 'password': password});
+  /// Connexion par numéro de téléphone au format international
+  /// (`+22790123456`, tel que fourni par `PhoneFieldWidget`).
+  Future<UserModel> login({
+    required String phone,
+    required String password,
+  }) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.auth.login,
+      data: {'phone': phone, 'password': password},
+    );
+    return _storeSession(response.data);
+  }
 
-    final data = response.data as Map<String, dynamic>;
+  /// Crée le compte et ouvre directement la session (l'API renvoie
+  /// `{ token, user }` comme pour la connexion).
+  Future<UserModel> register({
+    required String name,
+    required String phone,
+    required String password,
+    DateTime? birthDate,
+  }) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.auth.register,
+      data: {
+        'name': name,
+        'phone': phone,
+        'password': password,
+        if (birthDate != null) 'birthDate': Dates.toApiDate(birthDate),
+      },
+    );
+    return _storeSession(response.data);
+  }
+
+  Future<UserModel> _storeSession(dynamic body) async {
+    final data = body as Map<String, dynamic>;
     await _apiClient.saveToken(data['token'] as String);
     return UserModel.fromJson(data['user'] as Map<String, dynamic>);
   }

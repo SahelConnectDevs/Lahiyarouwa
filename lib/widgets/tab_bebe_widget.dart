@@ -1,10 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../features/grossesse/providers/grossesse_provider.dart';
+import 'fetus_widget.dart';
+
+/// Onglet « Bébé » : taille et poids moyens du bébé à la semaine en cours,
+/// avec une illustration qui grandit au fil de la grossesse.
 class TabBebeWidget extends StatelessWidget {
   const TabBebeWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final grossesse = context.watch<GrossesseProvider>();
+    final pregnancy = grossesse.pregnancy;
+    final fetus = grossesse.fetalSize;
+    if (pregnancy == null || fetus == null) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(28),
+          child: Text(
+            'Indiquez la date de vos dernières règles depuis l’accueil pour '
+            'suivre la croissance de votre bébé.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color(0xFF55515A), height: 1.4),
+          ),
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 25),
       child: Column(
@@ -22,15 +45,43 @@ class TabBebeWidget extends StatelessWidget {
               border: Border.all(color: const Color(0xFFFFE4EC)),
             ),
             child: Stack(
+              alignment: Alignment.center,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: double.infinity,
-                    child: Image.asset(
-                      'assets/img_bebe.png',
-                      fit: BoxFit.contain,
+                FetusWidget(echelle: fetus.echelle, size: 240),
+                Positioned(
+                  left: 14,
+                  top: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFE6EF),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${pregnancy.semaine} SA + ${pregnancy.jour} j',
+                      style: const TextStyle(
+                        color: Color(0xFFD81B60),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 12,
+                  right: 12,
+                  bottom: 12,
+                  child: Text(
+                    // Toutes les comparaisons commencent par « un(e) » : « d’une mangue ».
+                    'De la taille d’${fetus.comparaison}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF55515A),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -61,7 +112,7 @@ class TabBebeWidget extends StatelessWidget {
                 child: _InfoCard(
                   icon: Icons.monitor_weight_rounded,
                   titre: 'Poids',
-                  valeur: '12 g',
+                  valeur: fetus.poidsLabel,
                 ),
               ),
 
@@ -72,7 +123,7 @@ class TabBebeWidget extends StatelessWidget {
                 child: _InfoCard(
                   icon: Icons.straighten_rounded,
                   titre: 'Taille',
-                  valeur: '20,1 cm',
+                  valeur: fetus.tailleLabel,
                 ),
               ),
             ],
@@ -102,23 +153,22 @@ class TabBebeWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: const Color(0xFFFFD6E3)),
             ),
-            child: const Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Icône
-                Icon(
+                const Icon(
                   Icons.child_friendly_rounded,
                   size: 27,
                   color: Color(0xFFFF2D6F),
                 ),
 
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
 
                 Expanded(
                   child: Text(
-                    'Cette semaine, votre bébé bouge davantage '
-                    'et ses organes continuent à se développer.',
-                    style: TextStyle(
+                    fetus.developpement,
+                    style: const TextStyle(
                       fontSize: 13,
                       height: 1.5,
                       color: Color(0xFF55515A),
@@ -171,8 +221,9 @@ class TabBebeWidget extends StatelessWidget {
 
                 Expanded(
                   child: Text(
-                    'Ses empreintes digitales commencent '
-                    'à se développer.',
+                    'Taille et poids moyens à ce stade : chaque bébé grandit '
+                    'à son rythme. Votre professionnel de santé suit sa '
+                    'croissance lors des consultations et échographies.',
                     style: TextStyle(
                       fontSize: 13,
                       height: 1.5,

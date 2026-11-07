@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lahiyarouwa/view/ddr_page.dart';
-import '/view/sign_up_page.dart';
+import 'package:provider/provider.dart';
+
+import '../features/auth/providers/auth_provider.dart';
+import '../widgets/error_banner_widget.dart';
+import '../widgets/phone_field_widget.dart';
+import 'sign_up_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -11,12 +15,54 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
+  final _passwordController = TextEditingController();
 
-  bool _rememberMe = false;
   bool _obscurePassword = true;
+
+  /// Numéro complet au format international (ex: +22790123456).
+  String _phoneNumber = '';
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    FocusScope.of(context).unfocus();
+    if (!_formKey.currentState!.validate()) return;
+    // En cas de succès, _AppRoot (main.dart) affiche l'espace connecté et
+    // retire cet écran de la pile : rien d'autre à faire ici.
+    await context.read<AuthProvider>().login(
+      phone: _phoneNumber,
+      password: _passwordController.text,
+    );
+  }
+
+  void _forgotPassword() {
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Mot de passe oublié'),
+        content: const Text(
+          'La réinitialisation du mot de passe depuis l’application '
+          'n’est pas encore disponible. Rapprochez-vous de votre agent '
+          'communautaire ou de l’équipe Lahiyar Ouwa.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Compris'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBFC),
 
@@ -76,40 +122,30 @@ class _SignInPageState extends State<SignInPage> {
 
                           const SizedBox(height: 25),
 
+                          if (auth.errorMessage != null) ...[
+                            ErrorBannerWidget(message: auth.errorMessage!),
+                            const SizedBox(height: 14),
+                          ],
+
                           // =========================
                           // NUMÉRO DE TÉLÉPHONE
                           // =========================
-                          TextFormField(
-                            keyboardType: TextInputType.phone,
-                            textInputAction: TextInputAction.next,
-
-                            decoration: InputDecoration(
-                              labelText: 'Numéro de téléphone',
-
-                              prefixIcon: const Icon(Icons.phone_outlined),
-
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Veuillez entrer votre numéro';
-                              }
-
-                              return null;
-                            },
+                          PhoneFieldWidget(
+                            onChanged: (number) => _phoneNumber = number,
                           ),
 
-                          const SizedBox(height: 15),
+                          // intl_phone_field réserve déjà l'espace de son
+                          // message d'erreur sous le champ.
+                          const SizedBox(height: 4),
 
                           // =========================
                           // MOT DE PASSE
                           // =========================
                           TextFormField(
+                            controller: _passwordController,
                             obscureText: _obscurePassword,
                             textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) => _submit(),
 
                             decoration: InputDecoration(
                               labelText: 'Mot de passe',
@@ -147,43 +183,20 @@ class _SignInPageState extends State<SignInPage> {
                           const SizedBox(height: 8),
 
                           // =========================
-                          // SE SOUVENIR / MOT DE PASSE OUBLIÉ
+                          // MOT DE PASSE OUBLIÉ
                           // =========================
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: _rememberMe,
-
-                                activeColor: const Color(0xFFD81B60),
-
-                                onChanged: (value) {
-                                  setState(() {
-                                    _rememberMe = value ?? false;
-                                  });
-                                },
-                              ),
-
-                              const Expanded(
-                                child: Text(
-                                  'Se souvenir de moi',
-                                  style: TextStyle(fontSize: 13),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _forgotPassword,
+                              child: const Text(
+                                'Mot de passe oublié ?',
+                                style: TextStyle(
+                                  color: Color(0xFFD81B60),
+                                  fontSize: 12,
                                 ),
                               ),
-
-                              Expanded(
-                                child: TextButton(
-                                  onPressed: () {},
-
-                                  child: const Text(
-                                    'Mot de passe oublié ?',
-                                    style: TextStyle(
-                                      color: Color(0xFFD81B60),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
@@ -199,19 +212,11 @@ class _SignInPageState extends State<SignInPage> {
                       height: 52,
 
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            print('Connexion');
-                          }
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => DdrPage()),
-                          );
-                        },
+                        onPressed: auth.isLoading ? null : _submit,
 
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFD81B60),
+                          disabledBackgroundColor: const Color(0xFFE891B2),
 
                           foregroundColor: Colors.white,
                           overlayColor: const Color.fromARGB(
@@ -228,23 +233,32 @@ class _SignInPageState extends State<SignInPage> {
                           ),
                         ),
 
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: auth.isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
 
-                          children: [
-                            Text(
-                              'Se connecter',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                children: [
+                                  Text(
+                                    'Se connecter',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+
+                                  SizedBox(width: 10),
+
+                                  Icon(Icons.arrow_forward, size: 18),
+                                ],
                               ),
-                            ),
-
-                            SizedBox(width: 10),
-
-                            Icon(Icons.arrow_forward, size: 18),
-                          ],
-                        ),
                       ),
                     ),
 
@@ -253,8 +267,9 @@ class _SignInPageState extends State<SignInPage> {
                     // =========================
                     // INSCRIPTION
                     // =========================
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
 
                       children: [
                         const Text(
@@ -262,22 +277,21 @@ class _SignInPageState extends State<SignInPage> {
                           style: TextStyle(fontSize: 13, color: Colors.grey),
                         ),
 
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SignUpPage(),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              'S’inscrire',
-                              style: TextStyle(
-                                color: Color(0xFFD81B60),
-                                fontWeight: FontWeight.bold,
+                        TextButton(
+                          onPressed: () {
+                            auth.clearError();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpPage(),
                               ),
+                            );
+                          },
+                          child: const Text(
+                            'S’inscrire',
+                            style: TextStyle(
+                              color: Color(0xFFD81B60),
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),

@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Accès à l'API (https://api.lahiyarouwadayaro.com). Sans cette ligne
+         ici, seule la version debug (src/debug/AndroidManifest.xml) peut
+         joindre le serveur : la version publiée sur le Play Store non. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Lahiyar Ouwa"
         android:name="${applicationName}"

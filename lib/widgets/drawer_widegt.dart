@@ -39,10 +39,10 @@ class DrawerWidget extends StatelessWidget {
                     height: 58,
                     width: 58,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.18),
+                      color: Colors.white.withValues(alpha: 0.18),
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.55),
+                        color: Colors.white.withValues(alpha: 0.55),
                         width: 2,
                       ),
                     ),
@@ -178,7 +178,9 @@ class DrawerWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: Colors.grey.withOpacity(0.10)),
+                      border: Border.all(
+                        color: Colors.grey.withValues(alpha: 0.10),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -186,7 +188,7 @@ class DrawerWidget extends StatelessWidget {
                           height: 42,
                           width: 42,
                           decoration: BoxDecoration(
-                            color: primary.withOpacity(0.08),
+                            color: primary.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(13),
                           ),
                           child: const Icon(
@@ -235,7 +237,7 @@ class DrawerWidget extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 18),
               child: Column(
                 children: [
-                  Divider(color: Colors.grey.withOpacity(0.15)),
+                  Divider(color: Colors.grey.withValues(alpha: 0.15)),
                   const SizedBox(height: 8),
                   const Text(
                     'Lahiya Ouwa',
@@ -310,7 +312,7 @@ class DrawerWidget extends StatelessWidget {
                   height: 44,
                   width: 44,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.09),
+                    color: color.withValues(alpha: 0.09),
                     borderRadius: BorderRadius.circular(13),
                   ),
                   child: Icon(icon, color: color, size: 22),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../features/auth/providers/auth_provider.dart';
 
 class PlusPage extends StatefulWidget {
   const PlusPage({super.key});
@@ -8,6 +11,35 @@ class PlusPage extends StatefulWidget {
 }
 
 class _PlusPageState extends State<PlusPage> {
+  Future<void> _confirmLogout() async {
+    final auth = context.read<AuthProvider>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Se déconnecter ?'),
+        content: const Text(
+          'Vos données restent enregistrées : vous les retrouverez en vous '
+          'reconnectant avec votre numéro et votre mot de passe.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'Se déconnecter',
+              style: TextStyle(color: Color(0xFFC62828)),
+            ),
+          ),
+        ],
+      ),
+    );
+    // _AppRoot (main.dart) revient à l'accueil dès que la session est fermée.
+    if (confirmed == true) await auth.logout();
+  }
+
   static const Color primary = Color(0xFFD81B60);
   static const Color pink = Color(0xFFF34D68);
   static const Color background = Color(0xFFFFFBFC);
@@ -233,16 +265,16 @@ class _PlusPageState extends State<PlusPage> {
 
                     const SizedBox(width: 13),
 
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Bonjour 👋',
+                            'Bonjour ${context.watch<AuthProvider>().firstName} 👋',
                             style: TextStyle(color: textMuted, fontSize: 12),
                           ),
-                          SizedBox(height: 3),
-                          Text(
+                          const SizedBox(height: 3),
+                          const Text(
                             'Mon espace',
                             style: TextStyle(
                               color: textDark,
@@ -319,7 +351,7 @@ class _PlusPageState extends State<PlusPage> {
                           notificationsEnabled = value;
                         });
                       },
-                      activeColor: primary,
+                      activeThumbColor: primary,
                     ),
                     onTap: () {
                       setState(() {
@@ -475,6 +507,29 @@ class _PlusPageState extends State<PlusPage> {
                     onTap: () {},
                   ),
                 ],
+              ),
+            ),
+
+            // ====================================================
+            // DÉCONNEXION
+            // ====================================================
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: _MenuCard(
+                  children: [
+                    _MenuItem(
+                      icon: Icons.logout_rounded,
+                      iconBackground: const Color(0xFFFFEBEE),
+                      iconColor: const Color(0xFFC62828),
+                      title: 'Se déconnecter',
+                      subtitle:
+                          context.watch<AuthProvider>().currentUser?.phone ??
+                          'Fermer la session sur ce téléphone',
+                      onTap: _confirmLogout,
+                    ),
+                  ],
+                ),
               ),
             ),
 

@@ -1,6 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../features/alertes/data/alerte_repository.dart';
+import '../features/alertes/providers/alerte_provider.dart';
+import '../features/contractions/data/contraction_repository.dart';
+import '../features/contractions/providers/contraction_provider.dart';
 
 class ContractionPage extends StatefulWidget {
   const ContractionPage({super.key});
@@ -13,7 +19,6 @@ class _ContractionPageState extends State<ContractionPage> {
   static const Color pink = Color(0xFFF34D68);
   static const Color ink = Color(0xFF25242A);
   static const Color muted = Color(0xFF777780);
-  static const Color background = Color(0xFFFFFBFC);
 
   final Stopwatch _stopwatch = Stopwatch();
 
@@ -120,6 +125,8 @@ class _ContractionPageState extends State<ContractionPage> {
       _lengths.add(_stopwatch.elapsed);
     }
 
+    _saveSession();
+
     setState(() {
       _ticker?.cancel();
 
@@ -132,6 +139,39 @@ class _ContractionPageState extends State<ContractionPage> {
 
       _trackingStartedAt = null;
     });
+  }
+
+  /// Envoie la séance terminée à l'API (historique de suivi), si au moins
+  /// une contraction complète a été mesurée.
+  Future<void> _saveSession() async {
+    final startedAt = _trackingStartedAt;
+    final count = _lengths.length < _starts.length
+        ? _lengths.length
+        : _starts.length;
+    if (startedAt == null || count == 0) return;
+
+    final contractions = <Contraction>[
+      for (var i = 0; i < count; i++)
+        (debut: _starts[i], fin: _starts[i].add(_lengths[i])),
+    ];
+    final provider = context.read<ContractionProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final ok = await provider.saveSession(
+      debut: startedAt,
+      fin: DateTime.now(),
+      contractions: contractions,
+    );
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          ok
+              ? 'Séance enregistrée ($count contraction${count > 1 ? 's' : ''}).'
+              : provider.errorMessage ??
+                    'La séance n’a pas pu être enregistrée.',
+        ),
+      ),
+    );
   }
 
   // ------------------------------------------------------------
@@ -592,6 +632,8 @@ class _StatisticCard extends StatelessWidget {
 // PAGE : SIGNALER UN SIGNE
 // ===================================================================
 
+/// Signalement d'un signe inquiétant : envoyé à l'API, qui le transmet à
+/// l'équipe (admin-web) et à l'agent communautaire de l'utilisatrice.
 class SignalerSignePage extends StatefulWidget {
   const SignalerSignePage({super.key});
 
@@ -602,22 +644,54 @@ class SignalerSignePage extends StatefulWidget {
 class _SignalerSignePageState extends State<SignalerSignePage> {
   static const Color pink = Color(0xFFF34D68);
 
-  static const List<String> signes = [
-    'Saignement vaginal',
-    'Forte fièvre',
-    'Maux de tête sévères',
-    'Vision trouble',
-    'Douleur abdominale intense',
-    'Absence de mouvements du bébé',
-    'Perte de liquide',
-    'Convulsions',
-    'Autre signe',
-  ];
-
+  final _detailsController = TextEditingController();
   String? selected;
 
   @override
+  void dispose() {
+    _detailsController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _send() async {
+    final signe = selected;
+    if (signe == null) return;
+    final alertes = context.read<AlerteProvider>();
+    final ok = await alertes.signal(signe, details: _detailsController.text);
+    if (!mounted) return;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        icon: Icon(
+          ok ? Icons.health_and_safety_rounded : Icons.wifi_off_rounded,
+          color: pink,
+        ),
+        title: Text(ok ? 'Signalement envoyé' : 'Envoi impossible'),
+        content: Text(
+          ok
+              ? '« $signe » a été transmis à l’équipe et à votre agent '
+                    'communautaire.\n\nSans attendre leur appel, contactez '
+                    'rapidement votre centre de santé ou un professionnel.'
+              : '${alertes.errorMessage ?? 'Une erreur est survenue.'}\n\n'
+                    'En cas d’urgence, rendez-vous sans attendre dans votre '
+                    'centre de santé.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Compris', style: TextStyle(color: pink)),
+          ),
+        ],
+      ),
+    );
+    if (ok && mounted) Navigator.pop(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isSending = context.watch<AlerteProvider>().isSending;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBFC),
 
@@ -653,7 +727,7 @@ class _SignalerSignePageState extends State<SignalerSignePage> {
             ),
             child: Column(
               children: [
-                for (final signe in signes)
+                for (final signe in AlerteRepository.signes)
                   ListTile(
                     onTap: () {
                       setState(() {
@@ -673,43 +747,29 @@ class _SignalerSignePageState extends State<SignalerSignePage> {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
+
+          TextField(
+            controller: _detailsController,
+            maxLines: 3,
+            maxLength: 1000,
+            decoration: InputDecoration(
+              labelText: 'Précisions (facultatif)',
+              hintText: 'Depuis quand ? Avec d’autres signes ?',
+              filled: true,
+              fillColor: Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 8),
 
           SizedBox(
             height: 52,
             child: ElevatedButton(
-              onPressed: selected == null
-                  ? null
-                  : () {
-                      showDialog<void>(
-                        context: context,
-                        builder: (dialogContext) {
-                          return AlertDialog(
-                            icon: const Icon(
-                              Icons.health_and_safety_rounded,
-                              color: pink,
-                            ),
-                            title: const Text('Signe sélectionné'),
-                            content: Text(
-                              '$selected.\n\n'
-                              'Contactez rapidement votre centre '
-                              'de santé ou un professionnel.',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(dialogContext);
-                                },
-                                child: const Text(
-                                  'Compris',
-                                  style: TextStyle(color: pink),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
+              onPressed: selected == null || isSending ? null : _send,
               style: ElevatedButton.styleFrom(
                 backgroundColor: pink,
                 disabledBackgroundColor: const Color(0xFFF2C7D0),
@@ -718,13 +778,22 @@ class _SignalerSignePageState extends State<SignalerSignePage> {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: const Text(
-                'Signaler',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child: isSending
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Text(
+                      'Signaler',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ),
         ],

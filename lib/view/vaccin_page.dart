@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../core/utils/dates.dart';
+import '../core/utils/load_status.dart';
+import '../features/vaccination/data/models/vaccine_entry_model.dart';
+import '../features/vaccination/providers/vaccination_provider.dart';
+
+/// Onglet « Vaccin » : calendrier vaccinal de la maman, servi par l'API
+/// (contenu géré depuis l'admin-web) avec les doses déjà enregistrées.
 class VaccinPage extends StatelessWidget {
   const VaccinPage({super.key});
 
@@ -7,174 +15,240 @@ class VaccinPage extends StatelessWidget {
   static const _darkGreen = Color(0xFF174B32);
   static const _muted = Color(0xFF7C8981);
 
+  Future<void> _recordDose(
+    BuildContext context,
+    VaccineEntryModel entry,
+  ) async {
+    final provider = context.read<VaccinationProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final now = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      helpText: 'Date de la dose : ${entry.nom}',
+      initialDate: now,
+      firstDate: DateTime(now.year - 5),
+      lastDate: now,
+    );
+    if (date == null) return;
+    final ok = await provider.recordDose(entry.vaccinId, date);
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        content: Text(
+          ok
+              ? 'Dose enregistrée : ${entry.nom}'
+              : provider.errorMessage ?? 'Échec de l’enregistrement.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final vaccination = context.watch<VaccinationProvider>();
+    final calendar = vaccination.calendar;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7FBF8),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: const Icon(Icons.arrow_back_ios_new, color: _darkGreen),
-        ),
         title: const Text(
           'Mes vaccins',
           style: TextStyle(color: _darkGreen, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(18),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF57B77B), Color(0xFF23804C)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: _green.withValues(alpha: 0.2),
-                  blurRadius: 18,
-                  offset: const Offset(0, 8),
+      body: RefreshIndicator(
+        color: _green,
+        onRefresh: vaccination.load,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(18, 18, 18, 100),
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF57B77B), Color(0xFF23804C)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-            child: const Row(
-              children: [
-                CircleAvatar(
-                  radius: 27,
-                  backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.health_and_safety_rounded,
-                    color: _green,
-                    size: 30,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: _green.withValues(alpha: 0.2),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
                   ),
-                ),
-                SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Votre santé, notre priorité',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        'Gardez un œil sur vos vaccins et rappels.',
-                        style: TextStyle(color: Colors.white, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Row(
-            children: [
-              Expanded(
-                child: _SummaryTile(
-                  icon: Icons.check_circle_rounded,
-                  value: '1',
-                  label: 'Effectué',
-                  color: _green,
-                ),
+                ],
               ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _SummaryTile(
-                  icon: Icons.event_available_rounded,
-                  value: '2',
-                  label: 'À suivre',
-                  color: Color(0xFFDF9D35),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 25),
-          const Text(
-            'Mon calendrier vaccinal',
-            style: TextStyle(
-              color: _darkGreen,
-              fontSize: 19,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 12),
-          const _VaccinCard(
-            name: 'Vaccin antitétanique',
-            dose: 'Dose 1',
-            date: '18 juin 2026',
-            status: 'Effectué',
-            done: true,
-            description: 'Première dose enregistrée',
-            icon: Icons.verified_rounded,
-          ),
-          const SizedBox(height: 12),
-          const _VaccinCard(
-            name: 'Vaccin antitétanique',
-            dose: 'Dose 2',
-            date: 'À programmer',
-            status: 'À venir',
-            done: false,
-            description: 'À confirmer avec votre centre de santé',
-            icon: Icons.vaccines_rounded,
-          ),
-          const SizedBox(height: 12),
-          const _VaccinCard(
-            name: 'Rappel de vaccination',
-            dose: 'Prochaine dose',
-            date: 'Selon le carnet de santé',
-            status: 'À suivre',
-            done: false,
-            description: 'Demandez conseil à votre agent de santé',
-            icon: Icons.notifications_active_rounded,
-          ),
-          const SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEAF5ED),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: const Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(Icons.lightbulb_outline_rounded, color: _green),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Pensez à apporter votre carnet de santé à chaque consultation pour mettre à jour vos doses.',
-                    style: TextStyle(
-                      color: _darkGreen,
-                      height: 1.4,
-                      fontSize: 13,
+              child: const Row(
+                children: [
+                  CircleAvatar(
+                    radius: 27,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.health_and_safety_rounded,
+                      color: _green,
+                      size: 30,
                     ),
                   ),
+                  SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Votre santé, notre priorité',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          'Gardez un œil sur vos vaccins et rappels.',
+                          style: TextStyle(color: Colors.white, fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: _SummaryTile(
+                    icon: Icons.check_circle_rounded,
+                    value: '${vaccination.doneCount}',
+                    label: vaccination.doneCount > 1 ? 'Effectués' : 'Effectué',
+                    color: _green,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _SummaryTile(
+                    icon: Icons.event_available_rounded,
+                    value: '${vaccination.pendingCount}',
+                    label: 'À suivre',
+                    color: const Color(0xFFDF9D35),
+                  ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Les vaccins et dates affichés sont des exemples. Suivez les recommandations de votre professionnel de santé.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: _muted, fontSize: 11, height: 1.4),
-          ),
-        ],
+            const SizedBox(height: 25),
+            const Text(
+              'Mon calendrier vaccinal',
+              style: TextStyle(
+                color: _darkGreen,
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            if (vaccination.status == LoadStatus.loading && calendar.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(child: CircularProgressIndicator(color: _green)),
+              )
+            else if (vaccination.status == LoadStatus.error && calendar.isEmpty)
+              _LoadErrorCard(
+                message: vaccination.errorMessage,
+                onRetry: vaccination.load,
+              )
+            else
+              for (final entry in calendar) ...[
+                _VaccinCard(
+                  name: entry.nom,
+                  dose: entry.dose ?? 'Dose',
+                  date: entry.recueLe != null
+                      ? 'Reçu le ${Dates.short(entry.recueLe!)}'
+                      : entry.datePrevue != null
+                      ? Dates.short(entry.datePrevue!)
+                      : entry.moment,
+                  status: switch (entry.statut) {
+                    VaccineStatus.fait => 'Effectué',
+                    VaccineStatus.enRetard => 'En retard',
+                    VaccineStatus.aVenir => 'À venir',
+                  },
+                  done: entry.isDone,
+                  description: entry.isDone
+                      ? 'Dose enregistrée'
+                      : entry.description ?? 'Touchez pour enregistrer la dose',
+                  icon: entry.isDone
+                      ? Icons.verified_rounded
+                      : Icons.vaccines_rounded,
+                  onTap: entry.isDone || vaccination.isSaving
+                      ? null
+                      : () => _recordDose(context, entry),
+                ),
+                const SizedBox(height: 12),
+              ],
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: const Color(0xFFEAF5ED),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.lightbulb_outline_rounded, color: _green),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Touchez un vaccin reçu pour l’enregistrer. Apportez votre '
+                      'carnet de santé à chaque consultation.',
+                      style: TextStyle(
+                        color: _darkGreen,
+                        height: 1.4,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Calendrier indicatif. Suivez les recommandations de votre professionnel de santé.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: _muted, fontSize: 11, height: 1.4),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
+
+class _LoadErrorCard extends StatelessWidget {
+  const _LoadErrorCard({required this.message, required this.onRetry});
+
+  final String? message;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+    ),
+    child: Column(
+      children: [
+        Text(
+          message ?? 'Impossible de charger le calendrier.',
+          textAlign: TextAlign.center,
+        ),
+        TextButton(onPressed: onRetry, child: const Text('Réessayer')),
+      ],
+    ),
+  );
 }
 
 class _SummaryTile extends StatelessWidget {
@@ -246,6 +320,7 @@ class _VaccinCard extends StatelessWidget {
     required this.done,
     required this.description,
     required this.icon,
+    this.onTap,
   });
   final String name;
   final String dose;
@@ -254,6 +329,7 @@ class _VaccinCard extends StatelessWidget {
   final bool done;
   final String description;
   final IconData icon;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -261,7 +337,7 @@ class _VaccinCard extends StatelessWidget {
     const dark = Color(0xFF174B32);
     final accent = done ? green : const Color(0xFFCE922F);
     final pale = done ? const Color(0xFFE8F6ED) : const Color(0xFFFFF4DF);
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -338,6 +414,12 @@ class _VaccinCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+    if (onTap == null) return card;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: card,
     );
   }
 }
