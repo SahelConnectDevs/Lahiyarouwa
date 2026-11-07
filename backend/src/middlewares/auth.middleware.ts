@@ -1,6 +1,6 @@
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 
-import { User } from '../models/User';
+import { User, type Role } from '../models/User';
 import { AppError } from '../utils/AppError';
 import { verifyToken } from '../utils/jwt';
 
@@ -9,6 +9,9 @@ import { verifyToken } from '../utils/jwt';
  * req.user. Toute réponse 401 ici déclenche côté mobile
  * ApiClient.onUnauthorized -> AuthProvider.forceLogout (voir
  * lib/core/network/api_client.dart).
+ *
+ * Refuse aussi un token émis avant un changement de mot de passe (tokenVersion)
+ * ou appartenant à un compte désactivé par un admin.
  */
 export function requireAuth(): RequestHandler {
   return (req: Request, _res: Response, next: NextFunction): void => {
@@ -26,6 +29,14 @@ export function requireAuth(): RequestHandler {
           next(AppError.unauthorized('Utilisateur introuvable.'));
           return;
         }
+        if ((payload.v ?? 0) !== user.tokenVersion) {
+          next(AppError.unauthorized('Session expirée, reconnectez-vous.'));
+          return;
+        }
+        if (!user.isActive) {
+          next(AppError.unauthorized('Ce compte a été désactivé.'));
+          return;
+        }
         req.user = user;
         next();
       } catch {
@@ -34,8 +45,6 @@ export function requireAuth(): RequestHandler {
     })();
   };
 }
-
-type Role = 'user' | 'relais' | 'admin';
 
 /** Restreint une route à un ou plusieurs rôles, ex: requireRole('admin'). À poser après requireAuth(). */
 export function requireRole(...roles: Role[]): RequestHandler {

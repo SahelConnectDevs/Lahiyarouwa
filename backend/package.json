@@ -5,7 +5,7 @@
   "private": true,
   "license": "UNLICENSED",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "main": "dist/server.js",
   "scripts": {
@@ -16,7 +16,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "jest --runInBand",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "seed": "node dist/scripts/seed.js",
+    "seed:dev": "tsx src/scripts/seed.ts",
+    "create-admin": "node dist/scripts/createAdmin.js",
+    "create-admin:dev": "tsx src/scripts/createAdmin.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

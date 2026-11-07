@@ -1,0 +1,190 @@
+# API Lahiyar Ouwa Da Yara
+
+API REST Node.js 24 + Express 5 + MongoDB (TypeScript) utilisée par l'app mobile Flutter et par le futur back-office `admin-web/`.
+En production elle tourne sur le VPS derrière nginx, à l'adresse `https://api.lahiyarouwadayaro.com/api`.
+
+## Développement local
+
+```bash
+cd backend
+cp .env.example .env      # puis renseigner MONGODB_URI et JWT_SECRET
+npm install
+npm run seed:dev          # contenus de départ : CPN, vaccins, conseils
+npm run create-admin:dev -- --email toi@example.com --name "Ton nom"
+npm run dev               # http://localhost:3000/api
+```
+
+| Commande                                     | Rôle                                                                            |
+| -------------------------------------------- | ------------------------------------------------------------------------------- |
+| `npm test`                                   | Tests (MongoDB en mémoire, rien à installer)                                    |
+| `npm run lint` / `npm run format`            | ESLint / Prettier                                                               |
+| `npm run build`                              | Compile `src/` vers `dist/`                                                     |
+| `npm run seed`                               | Ajoute les contenus de départ manquants. Ne modifie jamais un contenu existant. |
+| `npm run create-admin -- --email … --name …` | Crée ou promeut un compte admin. Le mot de passe est demandé au clavier.        |
+
+## Points d'entrée
+
+Tout est sous `/api`. Sauf mention contraire, les routes exigent `Authorization: Bearer <token>`.
+
+En cas d'erreur, la réponse a toujours la forme `{ message, errors? }`. Le champ `errors` (`{ champ: raison }`) n'est présent que pour une erreur de validation (422).
+
+### Compte : `/auth`
+
+| Méthode | Chemin              | Détail                                                                                                                    |
+| ------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| POST    | `/auth/register`    | Public. Champs obligatoires : `name`, `phone`, `password`. Facultatifs : `email`, `birthDate`. Renvoie `{ token, user }`. |
+| POST    | `/auth/login`       | Public. Avec `phone` + `password` (app) ou `email` + `password` (admin). Limité à 10 essais par 15 minutes.               |
+| GET     | `/auth/me`          | Profil connecté.                                                                                                          |
+| PATCH   | `/auth/me`          | Modifie `name`, `email` ou `birthDate`.                                                                                   |
+| POST    | `/auth/me/password` | Avec `currentPassword` + `newPassword`. Renvoie un nouveau token et déconnecte les autres appareils.                      |
+| DELETE  | `/auth/me`          | Avec `password`. Supprime le compte et toutes ses données (exigence Google Play).                                         |
+
+Le numéro de téléphone est normalisé : `90 12 34 56`, `+227 90123456` et `0022790123456` désignent tous le compte `+22790123456`.
+
+### Suivi santé de l'utilisatrice connectée
+
+| Méthode            | Chemin                                  | Détail                                                                                                                |
+| ------------------ | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| GET                | `/grossesse`                            | Grossesse en cours : `semaine`, `jour`, `termePrevu`, `joursRestants`, `trimestre`. Renvoie `null` s'il n'y en a pas. |
+| PUT                | `/grossesse`                            | Avec `ddr`. Crée la grossesse en cours (201) ou corrige sa DDR (200).                                                 |
+| POST               | `/grossesse/terminer`                   | Avec `dateAccouchement`.                                                                                              |
+| GET                | `/grossesse/cpn`                        | Les 8 CPN, chacune avec sa fenêtre de dates et son `statut` (`effectuee`, `en_cours`, `en_retard` ou `a_venir`).      |
+| PUT                | `/grossesse/cpn/:numero`                | Avec `effectuee` (booléen), et en option `date` et `notes`.                                                           |
+| GET, POST          | `/enfants`                              | Liste ou ajout d'un enfant (`prenom`, `dateNaissance`, `sexe`, `poidsNaissanceGrammes`).                              |
+| GET, PATCH, DELETE | `/enfants/:id`                          | Un enfant. La suppression efface aussi ses vaccinations.                                                              |
+| GET                | `/vaccins?cible=maman\|enfant`          | Calendrier vaccinal (contenu).                                                                                        |
+| GET                | `/vaccinations/calendrier[?enfant=id]`  | Calendrier personnalisé avec, pour chaque vaccin, la date prévue et le statut (`fait`, `en_retard` ou `a_venir`).     |
+| GET, POST          | `/vaccinations[?enfant=id]`             | Doses reçues, ou ajout d'une dose (`vaccin`, `enfant` en option, `date`, `lieu`, `notes`).                            |
+| DELETE             | `/vaccinations/:id`                     | Supprime une dose.                                                                                                    |
+| GET, POST          | `/contractions`                         | Séances du compteur de contractions : `debut`, `fin`, `contractions[]`.                                               |
+| DELETE             | `/contractions/:id`                     | Supprime une séance.                                                                                                  |
+| GET, POST          | `/alertes`                              | Signes inquiétants signalés : `signe` (une des valeurs de l'app), `details`.                                          |
+| GET                | `/conseils?categorie=&langue=&semaine=` | **Public.** Conseils publiés.                                                                                         |
+
+### Planification familiale et rappels
+
+| Méthode | Chemin                                     | Détail                                                                                                                         |
+| ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| GET     | `/planification/methodes`                  | **Public.** Les 8 méthodes : avantages, effets secondaires, configuration du rappel.                                           |
+| GET     | `/planification/methodes/:code`            | **Public.** Une méthode, ex. `injectable`.                                                                                     |
+| GET     | `/planification/ma-methode`                | Méthode en cours avec `prochainRappel` (`echeance`, `joursRestants`, `enRetard`, `aPrevoir`, `heure`), ou `null`.              |
+| POST    | `/planification/ma-methode`                | Avec `methode` (code), `dateDebut`, et en option `dureeJours`, `heureRappel` (HH:MM) et `notes`. Arrête la méthode précédente. |
+| PATCH   | `/planification/ma-methode`                | Modifie `dureeJours`, `heureRappel` ou `notes` (`null` efface la valeur).                                                      |
+| POST    | `/planification/ma-methode/renouvellement` | Avec `date` : injection faite, nouvelle plaquette, implant remplacé.                                                           |
+| POST    | `/planification/ma-methode/arret`          | Avec `date`, et `raison` en option.                                                                                            |
+| GET     | `/planification/historique`                | Toutes les méthodes suivies.                                                                                                   |
+| GET     | `/rappels?horizon=30`                      | Rappels regroupés (PF, CPN, vaccins des enfants), du plus urgent au moins urgent.                                              |
+| GET     | `/auth/me/agent`                           | Nom et téléphone de son agent communautaire, ou `null`.                                                                        |
+
+Pour autoriser son agent à voir son suivi, l'utilisatrice envoie `PATCH /auth/me` avec `{ "partageRelais": true }`.
+
+### Espace agent communautaire : `/relais` (rôle `relais` uniquement)
+
+| Méthode   | Chemin                             | Détail                                                                                                           |
+| --------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| GET       | `/relais/tableau-de-bord`          | Nombre de bénéficiaires et de consentantes, alertes nouvelles ou en cours, rappels des 7 prochains jours.        |
+| GET       | `/relais/beneficiaires?search=`    | Ses bénéficiaires, celles avec une alerte ouverte en premier.                                                    |
+| GET       | `/relais/beneficiaires/:id`        | Fiche d'une bénéficiaire : résumé, alertes, accompagnements, rappels.                                            |
+| GET, POST | `/relais/beneficiaires/:id/suivis` | Accompagnements : `type` (`appel`, `visite`, `orientation` ou `autre`), `date`, `note`, `orienteVers`, `alerte`. |
+| GET       | `/relais/alertes?statut=`          | Alertes qui lui sont adressées.                                                                                  |
+| PATCH     | `/relais/alertes/:id`              | Avec `statut` et `noteSuivi`.                                                                                    |
+
+Règles d'accès :
+
+- un agent ne voit que les bénéficiaires qui lui sont rattachées ;
+- sans l'accord de la bénéficiaire (`partageRelais`), il ne voit que son nom, son téléphone, son secteur et ses alertes ;
+- avec son accord, il voit aussi un résumé de son suivi : semaine de grossesse, méthode et rappels.
+
+Une utilisatrice ne voit jamais les données d'une autre. Si elle demande une ressource qui ne lui appartient pas, l'API répond 404.
+
+### Back-office : `/admin` (rôle `admin` uniquement)
+
+| Méthode            | Chemin                                                   | Détail                                                                                                       |
+| ------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| GET                | `/admin/stats`                                           | Chiffres du tableau de bord.                                                                                 |
+| GET                | `/admin/users?search=&role=&isActive=&page=&limit=`      | Liste paginée `{ items, page, limit, total, totalPages }`.                                                   |
+| GET, PATCH, DELETE | `/admin/users/:id`                                       | Fiche d'un compte. Le PATCH accepte `role` et `isActive` ; désactiver un compte le déconnecte immédiatement. |
+| GET                | `/admin/alertes?statut=`                                 | Alertes, avec le nom et le téléphone de l'utilisatrice.                                                      |
+| PATCH              | `/admin/alertes/:id`                                     | Avec `statut` (`nouvelle`, `en_cours` ou `traitee`) et `noteSuivi`.                                          |
+| CRUD               | `/admin/conseils`, `/admin/vaccins`, `/admin/cpn-etapes` | Contenus de l'app. Un conseil n'apparaît dans l'app qu'une fois `publie: true`.                              |
+
+## Déploiement sur le VPS
+
+L'architecture prévue :
+
+- **nginx** gère le HTTPS (Let's Encrypt) et transmet les requêtes à l'API, qui n'écoute que sur `127.0.0.1:3000` ;
+- **PM2** fait tourner l'API (2 processus) et la redémarre en cas de crash ou de reboot ;
+- **MongoDB Atlas** héberge la base de données.
+
+L'admin-web sera servi par le même nginx sur `admin.lahiyarouwadayaro.com`.
+
+### 1. Une seule fois : préparer le terrain
+
+1. **DNS.** Créer un enregistrement `A` `api.lahiyarouwadayaro.com` qui pointe vers l'IP du VPS. Faire de même pour `admin.` dès maintenant, pour plus tard.
+2. **MongoDB Atlas :**
+   - créer un cluster (l'offre M0 gratuite suffit pour démarrer) ;
+   - créer un utilisateur de base de données avec un mot de passe fort ;
+   - dans _Network Access_, autoriser **uniquement l'IP du VPS** ;
+   - copier l'URI `mongodb+srv://…` et ajouter `/lahiyarouwa` comme nom de base.
+3. **Installer le VPS** (Node 24 LTS, PM2, nginx, certbot, pare-feu). `deploy` est l'utilisateur SSH qui déploiera :
+   ```bash
+   scp backend/deploy/setup-vps.sh deploy@IP:/tmp/
+   ssh deploy@IP 'sudo bash /tmp/setup-vps.sh deploy'
+   ```
+4. **Configurer nginx et le HTTPS :**
+   ```bash
+   scp backend/deploy/nginx-api.conf deploy@IP:/tmp/
+   ssh deploy@IP
+   sudo mv /tmp/nginx-api.conf /etc/nginx/sites-available/api.lahiyarouwadayaro.com
+   sudo ln -s /etc/nginx/sites-available/api.lahiyarouwadayaro.com /etc/nginx/sites-enabled/
+   sudo nginx -t && sudo systemctl reload nginx
+   sudo certbot --nginx -d api.lahiyarouwadayaro.com --redirect
+   ```
+5. **Renseigner les secrets** sur le VPS, dans `/var/www/api.lahiyarouwadayaro.com/shared/.env` (droits `600`, jamais commité) :
+   ```ini
+   NODE_ENV=production
+   PORT=3000
+   MONGODB_URI=mongodb+srv://USER:MOT_DE_PASSE@cluster.xxxxx.mongodb.net/lahiyarouwa
+   JWT_SECRET=<résultat de : node -e "console.log(require('crypto').randomBytes(48).toString('hex'))">
+   JWT_EXPIRES_IN=7d
+   CORS_ORIGIN=https://admin.lahiyarouwadayaro.com
+   TRUST_PROXY=1
+   ```
+
+### 2. À chaque mise en ligne
+
+Depuis ta machine (Git Bash sous Windows), à la racine du dépôt :
+
+```bash
+./backend/deploy/deploy.sh deploy@IP
+```
+
+Le script :
+
+1. compile l'API en local ;
+2. l'envoie dans une nouvelle release ;
+3. installe les dépendances et ajoute les contenus de départ manquants ;
+4. bascule sur la nouvelle version sans coupure ;
+5. vérifie `/health`, et revient automatiquement à la version précédente si l'API ne répond pas.
+
+### 3. Après le premier déploiement
+
+```bash
+ssh deploy@IP
+cd /var/www/api.lahiyarouwadayaro.com/current
+npm run create-admin -- --email admin@lahiyarouwadayaro.com --name "Ton nom"
+```
+
+### Exploitation
+
+| Besoin                          | Commande (sur le VPS)                                                                                             |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| État de l'API                   | `pm2 status` · `curl https://api.lahiyarouwadayaro.com/health`                                                    |
+| Journaux                        | `pm2 logs lahiyarouwa-api`                                                                                        |
+| Redémarrer                      | `pm2 reload lahiyarouwa-api`                                                                                      |
+| Revenir à la version précédente | `ln -sfn releases/<ancienne> current && pm2 reload lahiyarouwa-api` (dans `/var/www/api.lahiyarouwadayaro.com`)   |
+| Sauvegardes                     | Activer les sauvegardes dans Atlas (automatiques sur les offres payantes). Sur M0, faire un `mongodump` régulier. |
+
+### Côté app mobile
+
+Avant de compiler la version de production, mettre `ApiConstants._prodBaseUrl` à `https://api.lahiyarouwadayaro.com/api` dans `lib/core/constants/api_constants.dart`.

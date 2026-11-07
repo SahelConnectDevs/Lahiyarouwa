@@ -15,6 +15,10 @@ export class AppError extends Error {
     this.name = 'AppError';
   }
 
+  static badRequest(message: string): AppError {
+    return new AppError(message, 400);
+  }
+
   static unauthorized(message = 'Non autorisé.'): AppError {
     return new AppError(message, 401);
   }

@@ -13,13 +13,32 @@ function required(name: string): string {
   return value;
 }
 
+/**
+ * CORS_ORIGIN accepte une liste séparée par des virgules (ex: l'admin-web en
+ * prod + localhost en dev). '*' autorise tout — à réserver au développement :
+ * l'app mobile n'est pas soumise au CORS, seul le navigateur de l'admin l'est.
+ */
+function parseCorsOrigin(raw: string | undefined): string | string[] {
+  if (!raw || raw.trim() === '*') return '*';
+  return raw
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: Number(process.env.PORT ?? 3000),
   mongodbUri: required('MONGODB_URI'),
   jwtSecret: required('JWT_SECRET'),
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
-  corsOrigin: process.env.CORS_ORIGIN ?? '*',
+  corsOrigin: parseCorsOrigin(process.env.CORS_ORIGIN),
+  /**
+   * Nombre de proxies de confiance devant l'API (1 derrière nginx sur le VPS).
+   * Nécessaire pour que req.ip — et donc le rate limiting — voie l'IP réelle
+   * du client et non celle de nginx (127.0.0.1).
+   */
+  trustProxy: Number(process.env.TRUST_PROXY ?? 0),
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   },

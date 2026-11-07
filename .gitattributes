@@ -1,0 +1,5 @@
+# Les scripts shell et configs exécutés sur le VPS (Linux) doivent garder
+# des fins de ligne LF, même extraits sur Windows avec core.autocrlf=true —
+# sinon bash échoue avec "$'\r': command not found".
+*.sh text eol=lf
+*.conf text eol=lf
