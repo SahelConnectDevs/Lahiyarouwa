@@ -48,7 +48,7 @@ export function ForcedPasswordChange() {
 }
 
 function ChangePasswordForm({ currentLabel = 'Mot de passe actuel' }: { currentLabel?: string }) {
-  const { updateSession } = useAuth();
+  const { user, updateSession } = useAuth();
   const [currentPassword, setCurrent] = useState('');
   const [newPassword, setNew] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -86,6 +86,17 @@ function ChangePasswordForm({ currentLabel = 'Mot de passe actuel' }: { currentL
 
   return (
     <form onSubmit={onSubmit} className="password-form">
+      {/* Identifiant du compte (invisible) : sans lui, le gestionnaire de mots
+          de passe du navigateur enregistre le nouveau mot de passe sous le
+          dernier identifiant saisi sur le site, par ex. celui d'un autre compte. */}
+      <input
+        type="text"
+        name="username"
+        autoComplete="username"
+        value={user?.email ?? user?.phone ?? ''}
+        readOnly
+        hidden
+      />
       {message && (
         <div className={`notice notice-${message.tone}`} role={message.tone === 'error' ? 'alert' : 'status'}>
           {message.text}
