@@ -45,6 +45,20 @@ export const verifyLoginCodeValidator = [
 
 export const resendLoginCodeValidator = [challengeTokenRule];
 
+/** Mot de passe oublié : adresse e-mail du compte. */
+export const forgotPasswordValidator = [
+  body('email').isEmail().withMessage('E-mail invalide.').trim().toLowerCase(),
+];
+
+/** Nouveau mot de passe choisi depuis le lien reçu par e-mail. */
+export const resetPasswordValidator = [
+  body('token')
+    .isString()
+    .isLength({ min: 20, max: 100 })
+    .withMessage('Ce lien n’est plus valable. Demandez-en un nouveau.'),
+  passwordRule('newPassword'),
+];
+
 export const updateProfileValidator = [
   body('name')
     .optional()

@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
+import { Link } from 'react-router';
 
 import { ApiError, errorMessage } from '../api/client';
 import type { LoginChallenge } from '../api/types';
@@ -193,6 +194,11 @@ export function LoginPage() {
           <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
             {submitting ? 'Connexion…' : 'Se connecter'}
           </button>
+          <div className="login-actions login-actions-center">
+            <Link to="/mot-de-passe-oublie" className="btn btn-ghost">
+              Mot de passe oublié ?
+            </Link>
+          </div>
         </form>
       )}
     </div>

@@ -3,14 +3,21 @@ import { Router } from 'express';
 import * as authController from '../controllers/auth.controller';
 import * as pfController from '../controllers/pf.controller';
 import { requireAuth } from '../middlewares/auth.middleware';
-import { loginCodeRateLimit, loginRateLimit, registerRateLimit } from '../middlewares/rateLimit.middleware';
+import {
+  loginCodeRateLimit,
+  loginRateLimit,
+  passwordResetRateLimit,
+  registerRateLimit,
+} from '../middlewares/rateLimit.middleware';
 import { validate } from '../middlewares/validate.middleware';
 import {
   changePasswordValidator,
   deleteAccountValidator,
+  forgotPasswordValidator,
   loginValidator,
   registerValidator,
   resendLoginCodeValidator,
+  resetPasswordValidator,
   updateProfileValidator,
   verifyLoginCodeValidator,
 } from '../validators/auth.validator';
@@ -34,6 +41,22 @@ router.post(
   resendLoginCodeValidator,
   validate,
   authController.resendLoginCode,
+);
+
+// Mot de passe oublié : lien envoyé par e-mail, puis nouveau mot de passe.
+router.post(
+  '/password/forgot',
+  passwordResetRateLimit,
+  forgotPasswordValidator,
+  validate,
+  authController.forgotPassword,
+);
+router.post(
+  '/password/reset',
+  loginRateLimit,
+  resetPasswordValidator,
+  validate,
+  authController.resetPassword,
 );
 
 router.get('/me', requireAuth(), authController.me);

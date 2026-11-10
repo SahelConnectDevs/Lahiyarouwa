@@ -32,6 +32,15 @@ export const loginCodeRateLimit = rateLimit({
   message: { message: 'Trop de tentatives. Réessaie dans quelques minutes.' },
 });
 
+/** Mot de passe oublié : 5 demandes / heure par IP (en plus de 1 lien / 2 min par compte). */
+export const passwordResetRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: isTest ? 1000 : 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Trop de demandes. Réessaie dans une heure.' },
+});
+
 /** Limite la création de comptes en masse : 10 inscriptions / heure par IP. */
 export const registerRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000,

@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 
 import * as authService from '../services/auth.service';
+import * as passwordResetService from '../services/passwordReset.service';
 import * as twoFactorService from '../services/twoFactor.service';
 import { asyncHandler } from '../utils/asyncHandler';
 import { bodyData, currentUser, currentUserId } from '../utils/request';
@@ -25,6 +26,20 @@ export const resendLoginCode = asyncHandler(async (req: Request, res: Response) 
     bodyData<{ challengeToken: string }>(req).challengeToken,
   );
   res.status(200).json(result);
+});
+
+/** Toujours la même réponse, que le compte existe ou non (pas d'énumération des e-mails). */
+export const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
+  await passwordResetService.requestReset(bodyData<{ email: string }>(req).email);
+  res.status(200).json({
+    message: 'Si un compte correspond à cette adresse, un lien de réinitialisation vient de lui être envoyé.',
+  });
+});
+
+export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+  const { token, newPassword } = bodyData<{ token: string; newPassword: string }>(req);
+  await passwordResetService.resetPassword(token, newPassword);
+  res.status(200).json({ message: 'Mot de passe changé. Vous pouvez vous connecter.' });
 });
 
 // GET /auth/me renvoie l'utilisateur nu (pas de wrapper { user }), pour

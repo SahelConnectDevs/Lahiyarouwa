@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router';
 
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { Layout } from './components/Layout';
@@ -13,11 +13,15 @@ import { AgentsPage } from './pages/AgentsPage';
 import { AlertsPage } from './pages/AlertsPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
+import { ForgotPasswordPage, ResetPasswordPage } from './pages/PasswordResetPages';
 import { UserDetailPage } from './pages/UserDetailPage';
 import { UsersPage } from './pages/UsersPage';
 
 function Root() {
   const { status, user } = useAuth();
+  const location = useLocation();
+  // Lien reçu par e-mail : accessible connecté ou non.
+  if (location.pathname === '/reinitialiser-mot-de-passe') return <ResetPasswordPage />;
   if (status === 'unknown') {
     return (
       <div className="splash">
@@ -25,7 +29,14 @@ function Root() {
       </div>
     );
   }
-  if (status === 'unauthenticated') return <LoginPage />;
+  if (status === 'unauthenticated') {
+    return (
+      <Routes>
+        <Route path="mot-de-passe-oublie" element={<ForgotPasswordPage />} />
+        <Route path="*" element={<LoginPage />} />
+      </Routes>
+    );
+  }
   if (user?.mustChangePassword) return <ForcedPasswordChange />;
   if (user?.role === 'relais') {
     // Espace agent : uniquement ses bénéficiaires, ses alertes et ses suivis.

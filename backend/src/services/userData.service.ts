@@ -6,6 +6,7 @@ import { ContractionSession } from '../models/ContractionSession';
 import { ContraceptionRecord } from '../models/ContraceptionRecord';
 import { FollowUp } from '../models/FollowUp';
 import { LoginChallenge } from '../models/LoginChallenge';
+import { PasswordReset } from '../models/PasswordReset';
 import { Pregnancy } from '../models/Pregnancy';
 import { User } from '../models/User';
 import { VaccinationRecord } from '../models/VaccinationRecord';
@@ -27,6 +28,7 @@ export async function deleteUserAndData(userId: Types.ObjectId | string): Promis
     ContraceptionRecord.deleteMany({ user: userId }),
     FollowUp.deleteMany({ beneficiaire: userId }),
     LoginChallenge.deleteMany({ user: userId }),
+    PasswordReset.deleteMany({ user: userId }),
     // Si le compte supprimé est un agent : ses bénéficiaires et alertes
     // ouvertes perdent leur agent (à réassigner depuis l'admin) ; ses notes
     // de suivi restent dans le dossier des bénéficiaires, sans auteur.

@@ -1098,3 +1098,10 @@ a.me:hover {
 .stat-grid + .card {
   margin-top: 16px;
 }
+
+.login-actions-center {
+  justify-content: center;
+}
+.login-card a.btn {
+  text-decoration: none;
+}

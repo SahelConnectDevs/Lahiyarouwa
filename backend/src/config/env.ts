@@ -47,6 +47,8 @@ export const env = {
    * affichés dans la console en développement et l'envoi échoue (503) en
    * production.
    */
+  /** Adresse publique de l'espace web (liens envoyés par e-mail, ex. réinitialisation). */
+  webAppUrl: (process.env.WEB_APP_URL ?? 'https://admin.lahiyarouwadayaro.com').replace(/\/+$/, ''),
   smtp: {
     host: process.env.SMTP_HOST ?? '',
     port: Number(process.env.SMTP_PORT ?? 465),
