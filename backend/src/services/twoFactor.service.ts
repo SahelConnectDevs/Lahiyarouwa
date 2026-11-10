@@ -4,6 +4,7 @@ import { env } from '../config/env';
 import { LoginChallenge } from '../models/LoginChallenge';
 import { User, type UserDocument } from '../models/User';
 import { AppError } from '../utils/AppError';
+import { loginCodeMail } from '../templates/loginCodeMail';
 import { sendMail } from './mail.service';
 
 /** Durée de validité d'un code (et de la connexion en attente). */
@@ -53,32 +54,8 @@ function newCode(): string {
   return randomInt(0, 1_000_000).toString().padStart(6, '0');
 }
 
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
-}
-
 async function sendCode(user: UserDocument, code: string): Promise<void> {
-  const minutes = CODE_TTL_MS / 60_000;
-  await sendMail({
-    to: user.email!,
-    subject: `${code} : votre code de connexion Lahiyar Ouwa Da Yaro`,
-    text: [
-      `Bonjour ${user.name},`,
-      '',
-      `Votre code de connexion à l'administration Lahiyar Ouwa Da Yaro est : ${code}`,
-      '',
-      `Il est valable ${minutes} minutes. Ne le communiquez à personne : notre équipe ne vous le demandera jamais.`,
-      '',
-      "Si vous n'êtes pas à l'origine de cette connexion, quelqu'un d'autre connaît votre mot de passe : changez-le sans attendre.",
-    ].join('\n'),
-    html: `<!doctype html><html lang="fr"><body style="font-family:Arial,sans-serif;color:#1f2937;line-height:1.5">
-<p>Bonjour ${escapeHtml(user.name)},</p>
-<p>Votre code de connexion à l'administration <strong>Lahiyar Ouwa Da Yaro</strong> est :</p>
-<p style="font-size:28px;font-weight:bold;letter-spacing:6px;margin:16px 0">${code}</p>
-<p>Il est valable ${minutes} minutes. Ne le communiquez à personne : notre équipe ne vous le demandera jamais.</p>
-<p style="color:#6b7280;font-size:13px">Si vous n'êtes pas à l'origine de cette connexion, quelqu'un d'autre connaît votre mot de passe : changez-le sans attendre.</p>
-</body></html>`,
-  });
+  await sendMail(loginCodeMail({ to: user.email!, name: user.name, code, minutes: CODE_TTL_MS / 60_000 }));
 }
 
 /**

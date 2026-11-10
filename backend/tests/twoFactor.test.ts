@@ -29,6 +29,10 @@ describe('Connexion admin à double authentification', () => {
     expect(challenge.email).toMatch(/^ad\*\*\*@example\.com$/);
     expect(testOutbox).toHaveLength(1);
     expect(testOutbox[0]!.to).toBe(email);
+    // Logo joint au mail et affiché via cid: (pas d'image distante).
+    const logo = testOutbox[0]!.attachments?.[0];
+    expect(logo?.cid).toBeDefined();
+    expect(testOutbox[0]!.html).toContain(`cid:${logo!.cid}`);
 
     // Le code est accepté même saisi avec des espaces.
     const code = lastLoginCode(email);

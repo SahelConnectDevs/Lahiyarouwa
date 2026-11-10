@@ -8,6 +8,8 @@ export interface Mail {
   subject: string;
   text: string;
   html: string;
+  /** Pièces jointes ; avec `cid`, image affichée dans le HTML via `cid:`. */
+  attachments?: { filename: string; content: Buffer; cid?: string; contentType?: string }[];
 }
 
 /**
