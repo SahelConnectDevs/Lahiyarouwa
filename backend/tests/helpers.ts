@@ -9,6 +9,7 @@ import request from 'supertest';
 import { createApp } from '../src/app';
 import { connectDatabase, disconnectDatabase } from '../src/config/db';
 import { User } from '../src/models/User';
+import { testOutbox } from '../src/services/mail.service';
 
 export const app = createApp();
 
@@ -50,16 +51,34 @@ export async function registerUser(
   return { token: response.body.token, userId: response.body.user.id, phone: response.body.user.phone };
 }
 
-/** Crée un admin directement en base (comme le script create-admin) puis le connecte par e-mail. */
+/** Code à 6 chiffres du dernier mail de connexion envoyé à `email` (outbox de test). */
+export function lastLoginCode(email: string): string {
+  const mail = [...testOutbox].reverse().find((m) => m.to === email);
+  const code = mail?.text.match(/\b(\d{6})\b/)?.[1];
+  if (!code) throw new Error(`Aucun code envoyé à ${email}`);
+  return code;
+}
+
+let adminCounter = 0;
+
+/** Crée un admin directement en base (comme le script create-admin), en renvoie l'e-mail. */
+export async function createAdmin(password = 'admin-password'): Promise<string> {
+  adminCounter += 1;
+  const email = `admin${adminCounter}-${Date.now()}@example.com`;
+  await User.create({ email, name: 'Admin', role: 'admin', passwordHash: await bcrypt.hash(password, 4) });
+  return email;
+}
+
+/** Crée un admin puis le connecte par e-mail, double authentification comprise. */
 export async function loginAdmin(): Promise<{ token: string; userId: string }> {
-  const email = `admin${Date.now()}@example.com`;
-  await User.create({
-    email,
-    name: 'Admin',
-    role: 'admin',
-    passwordHash: await bcrypt.hash('admin-password', 4),
-  });
-  const response = await request(app).post('/api/auth/login').send({ email, password: 'admin-password' });
+  const email = await createAdmin();
+  const first = await request(app).post('/api/auth/login').send({ email, password: 'admin-password' });
+  const response = await request(app)
+    .post('/api/auth/login/verify')
+    .send({ challengeToken: first.body.challengeToken, code: lastLoginCode(email) });
+  if (response.status !== 200) {
+    throw new Error(`Connexion admin échouée (${response.status}) : ${JSON.stringify(response.body)}`);
+  }
   return { token: response.body.token, userId: response.body.user.id };
 }
 

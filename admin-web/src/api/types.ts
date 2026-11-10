@@ -27,6 +27,20 @@ export interface AuthResult {
   user: PublicUser;
 }
 
+/** Réponse de /auth/login pour un admin : un code a été envoyé par e-mail. */
+export interface LoginChallenge {
+  mfaRequired: true;
+  challengeToken: string;
+  /** Adresse masquée où le code a été envoyé. */
+  email: string;
+  expiresAt: string;
+  /** Secondes avant de pouvoir redemander un code. */
+  resendIn: number;
+}
+
+/** Réponse de /auth/login/resend. */
+export type ResendResult = Pick<LoginChallenge, 'email' | 'expiresAt' | 'resendIn'>;
+
 export interface AdminUser extends PublicUser {
   isActive: boolean;
   lastLoginAt: string | null;

@@ -20,6 +20,18 @@ export const loginRateLimit = rateLimit({
   message: { message: 'Trop de tentatives de connexion. Réessaie dans quelques minutes.' },
 });
 
+/**
+ * Saisie et renvoi du code de double authentification : 20 requêtes / 15 min
+ * par IP, en plus du plafond d'essais par connexion (twoFactor.service.ts).
+ */
+export const loginCodeRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: isTest ? 1000 : 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Trop de tentatives. Réessaie dans quelques minutes.' },
+});
+
 /** Limite la création de comptes en masse : 10 inscriptions / heure par IP. */
 export const registerRateLimit = rateLimit({
   windowMs: 60 * 60 * 1000,

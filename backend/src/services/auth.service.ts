@@ -3,6 +3,12 @@ import bcrypt from 'bcryptjs';
 import { User, type UserDocument } from '../models/User';
 import { AppError } from '../utils/AppError';
 import { signToken } from '../utils/jwt';
+import {
+  requiresTwoFactor,
+  startChallenge,
+  verifyChallenge,
+  type TwoFactorChallenge,
+} from './twoFactor.service';
 import { deleteUserAndData } from './userData.service';
 
 const SALT_ROUNDS = 12;
@@ -79,12 +85,17 @@ export async function register(input: {
   return { token: issueToken(user), user: toPublicUser(user) };
 }
 
-/** Connexion par téléphone (app mobile) ou par e-mail (admin-web). */
+/**
+ * Connexion par téléphone (app mobile) ou par e-mail (admin-web). Pour un
+ * compte à double authentification (admin), un mot de passe correct ne
+ * connecte pas encore : un code est envoyé à son e-mail de connexion et la
+ * réponse est un {@link TwoFactorChallenge}, à compléter par {@link verifyLoginCode}.
+ */
 export async function login(input: {
   phone?: string;
   email?: string;
   password: string;
-}): Promise<AuthResult> {
+}): Promise<AuthResult | TwoFactorChallenge> {
   const filter = input.phone ? { phone: input.phone } : { email: input.email };
   const user = await User.findOne(filter).select('+passwordHash');
   // Même message (et un hash comparé dans les deux cas) que le compte existe
@@ -97,10 +108,20 @@ export async function login(input: {
     throw AppError.forbidden('Ce compte a été désactivé. Contactez le support.');
   }
 
+  if (requiresTwoFactor(user)) return startChallenge(user);
+
+  return completeLogin(user);
+}
+
+async function completeLogin(user: UserDocument): Promise<AuthResult> {
   user.lastLoginAt = new Date();
   await user.save();
-
   return { token: issueToken(user), user: toPublicUser(user) };
+}
+
+/** Deuxième étape de la connexion : code reçu par e-mail → { token, user }. */
+export async function verifyLoginCode(input: { challengeToken: string; code: string }): Promise<AuthResult> {
+  return completeLogin(await verifyChallenge(input.challengeToken, input.code));
 }
 
 export async function updateProfile(

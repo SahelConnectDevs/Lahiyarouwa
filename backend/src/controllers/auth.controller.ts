@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 
 import * as authService from '../services/auth.service';
+import * as twoFactorService from '../services/twoFactor.service';
 import { asyncHandler } from '../utils/asyncHandler';
 import { bodyData, currentUser, currentUserId } from '../utils/request';
 
@@ -11,6 +12,18 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const result = await authService.login(bodyData<Parameters<typeof authService.login>[0]>(req));
+  res.status(200).json(result);
+});
+
+export const verifyLoginCode = asyncHandler(async (req: Request, res: Response) => {
+  const result = await authService.verifyLoginCode(bodyData<{ challengeToken: string; code: string }>(req));
+  res.status(200).json(result);
+});
+
+export const resendLoginCode = asyncHandler(async (req: Request, res: Response) => {
+  const result = await twoFactorService.resendChallenge(
+    bodyData<{ challengeToken: string }>(req).challengeToken,
+  );
   res.status(200).json(result);
 });
 

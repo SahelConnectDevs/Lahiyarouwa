@@ -30,14 +30,18 @@ En cas d'erreur, la réponse a toujours la forme `{ message, errors? }`. Le cham
 
 ### Compte : `/auth`
 
-| Méthode | Chemin              | Détail                                                                                                                    |
-| ------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| POST    | `/auth/register`    | Public. Champs obligatoires : `name`, `phone`, `password`. Facultatifs : `email`, `birthDate`. Renvoie `{ token, user }`. |
-| POST    | `/auth/login`       | Public. Avec `phone` + `password` (app) ou `email` + `password` (admin). Limité à 10 essais par 15 minutes.               |
-| GET     | `/auth/me`          | Profil connecté.                                                                                                          |
-| PATCH   | `/auth/me`          | Modifie `name`, `email` ou `birthDate`.                                                                                   |
-| POST    | `/auth/me/password` | Avec `currentPassword` + `newPassword`. Renvoie un nouveau token et déconnecte les autres appareils.                      |
-| DELETE  | `/auth/me`          | Avec `password`. Supprime le compte et toutes ses données (exigence Google Play).                                         |
+| Méthode | Chemin               | Détail                                                                                                                                                                                                                                         |
+| ------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST    | `/auth/register`     | Public. Champs obligatoires : `name`, `phone`, `password`. Facultatifs : `email`, `birthDate`. Renvoie `{ token, user }`.                                                                                                                      |
+| POST    | `/auth/login`        | Public. Avec `phone` + `password` (app) ou `email` + `password` (admin). Limité à 10 essais par 15 minutes. Renvoie `{ token, user }`, ou pour un admin `{ mfaRequired: true, challengeToken, email, expiresAt, resendIn }` (voir ci-dessous). |
+| POST    | `/auth/login/verify` | Public. Avec `challengeToken` + `code` (6 chiffres reçus par e-mail). Renvoie `{ token, user }`.                                                                                                                                               |
+| POST    | `/auth/login/resend` | Public. Avec `challengeToken`. Envoie un nouveau code (1 par minute, 5 au plus par connexion).                                                                                                                                                 |
+| GET     | `/auth/me`           | Profil connecté.                                                                                                                                                                                                                               |
+| PATCH   | `/auth/me`           | Modifie `name`, `email` ou `birthDate`.                                                                                                                                                                                                        |
+| POST    | `/auth/me/password`  | Avec `currentPassword` + `newPassword`. Renvoie un nouveau token et déconnecte les autres appareils.                                                                                                                                           |
+| DELETE  | `/auth/me`           | Avec `password`. Supprime le compte et toutes ses données (exigence Google Play).                                                                                                                                                              |
+
+**Double authentification des admins** : un mot de passe admin correct ne donne pas de token. Un code à 6 chiffres est envoyé à l'e-mail de connexion du compte (valable 10 minutes, usage unique). Au bout de 5 codes faux, il faut ressaisir le mot de passe. Les codes et les jetons ne sont stockés que hachés (collection `loginchallenges`, purgée automatiquement à expiration). Les comptes `user` et `relais` ne sont pas concernés.
 
 Le numéro de téléphone est normalisé : `90 12 34 56`, `+227 90123456` et `0022790123456` désignent tous le compte `+22790123456`.
 
@@ -183,6 +187,26 @@ npm run create-admin -- --email admin@lahiyarouwadayaro.com --name "Ton nom"
 | Journaux                        | `pm2 logs lahiyarouwa-api`                                                                                      |
 | Redémarrer                      | `pm2 reload lahiyarouwa-api`                                                                                    |
 | Revenir à la version précédente | `ln -sfn releases/<ancienne> current && pm2 reload lahiyarouwa-api` (dans `/var/www/api.lahiyarouwadayaro.com`) |
+
+### Envoi des e-mails (codes de connexion admin)
+
+Les codes partent via le relais SMTP de **Brevo** (compte créé avec smtpsahelconnect@gmail.com), expéditeur `smtpsahelconnect@gmail.com`. **À configurer avant de déployer** : sans SMTP, la connexion admin répond 503 en production.
+
+1. Dans Brevo, **Expéditeurs, domaines et IP dédiées > Expéditeurs** : vérifier que `smtpsahelconnect@gmail.com` est un expéditeur validé (sinon l'ajouter et cliquer le lien de confirmation reçu).
+2. Dans Brevo, **SMTP & API > onglet SMTP** : noter l'**identifiant** (`xxxx@smtp-brevo.com`) et générer une **clé SMTP** nommée « Lahiyarouwa API » (affichée une seule fois).
+3. Sur le VPS, en tant que `deploy` : `nano /var/www/api.lahiyarouwadayaro.com/shared/.env`, puis ajouter :
+   ```
+   SMTP_HOST=smtp-relay.brevo.com
+   SMTP_PORT=587
+   SMTP_USER=<identifiant SMTP Brevo, xxxx@smtp-brevo.com>
+   SMTP_PASS=<clé SMTP Brevo>
+   MAIL_FROM="Lahiyar Ouwa Da Yaro <smtpsahelconnect@gmail.com>"
+   ```
+4. `pm2 reload lahiyarouwa-api --update-env`, puis se connecter sur l'admin : le code doit arriver (regarder les spams la première fois).
+
+En cas d'échec, le détail est dans `pm2 logs lahiyarouwa-api --lines 50 --nostream` (« Échec de l'envoi d'un e-mail ») et dans Brevo > **Transactionnel > Logs**. En local, sans `SMTP_HOST`, le code s'affiche dans la console de `npm run dev`. L'offre gratuite de Brevo permet 300 mails par jour, ce qui suffit largement pour les connexions admin.
+
+Pour une meilleure délivrabilité, on pourra plus tard authentifier le domaine `lahiyarouwadayaro.com` dans Brevo (enregistrements DNS SPF/DKIM/DMARC) et envoyer depuis `no-reply@lahiyarouwadayaro.com` : il suffira de changer `MAIL_FROM`.
 
 ### Sauvegardes de la base
 

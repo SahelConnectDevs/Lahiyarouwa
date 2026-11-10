@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import 'package:lahiyarouwa/core/errors/app_exception.dart';
 import 'package:lahiyarouwa/core/network/api_client.dart';
 import 'package:lahiyarouwa/features/auth/data/auth_repository.dart';
 
@@ -52,6 +53,21 @@ void main() {
     ).called(1);
     verify(() => api.saveToken('jwt')).called(1);
   });
+
+  test(
+    'login refuse un compte admin (code e-mail attendu) sans stocker de token',
+    () async {
+      when(() => api.post('/auth/login', data: any(named: 'data'))).thenAnswer(
+        (_) async => ok({'mfaRequired': true, 'challengeToken': 'x'}),
+      );
+
+      await expectLater(
+        repository.login(phone: '+22790123456', password: 'secret1'),
+        throwsA(isA<ServerException>()),
+      );
+      verifyNever(() => api.saveToken(any()));
+    },
+  );
 
   test('register envoie la date de naissance au format date seule', () async {
     when(

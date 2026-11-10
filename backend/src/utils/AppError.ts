@@ -35,6 +35,14 @@ export class AppError extends Error {
     return new AppError(message, 409);
   }
 
+  static tooManyRequests(message: string): AppError {
+    return new AppError(message, 429);
+  }
+
+  static unavailable(message: string): AppError {
+    return new AppError(message, 503);
+  }
+
   static validation(message: string, fieldErrors: Record<string, string>): AppError {
     return new AppError(message, 422, fieldErrors);
   }

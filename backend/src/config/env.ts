@@ -39,6 +39,23 @@ export const env = {
    * du client et non celle de nginx (127.0.0.1).
    */
   trustProxy: Number(process.env.TRUST_PROXY ?? 0),
+  /**
+   * Serveur SMTP qui envoie les codes de connexion (double authentification
+   * des admins). En prod : relais SMTP Brevo (smtp-relay.brevo.com, port
+   * 587 STARTTLS), SMTP_USER = identifiant SMTP Brevo, SMTP_PASS = clé SMTP
+   * Brevo (jamais le mot de passe du compte). Sans SMTP_HOST, les mails sont
+   * affichés dans la console en développement et l'envoi échoue (503) en
+   * production.
+   */
+  smtp: {
+    host: process.env.SMTP_HOST ?? '',
+    port: Number(process.env.SMTP_PORT ?? 465),
+    // true pour le port 465 (TLS direct), false pour 587 (STARTTLS).
+    secure: (process.env.SMTP_SECURE ?? String(Number(process.env.SMTP_PORT ?? 465) === 465)) === 'true',
+    user: process.env.SMTP_USER ?? '',
+    pass: process.env.SMTP_PASS ?? '',
+    from: process.env.MAIL_FROM || process.env.SMTP_USER || '',
+  },
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   },

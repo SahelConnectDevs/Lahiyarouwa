@@ -1,3 +1,4 @@
+import '../../../core/errors/app_exception.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/endpoints.dart';
 import '../../../core/utils/dates.dart';
@@ -49,6 +50,14 @@ class AuthRepository {
 
   Future<UserModel> _storeSession(dynamic body) async {
     final data = body as Map<String, dynamic>;
+    // Compte administrateur : l'API attend un code envoyé par e-mail (double
+    // authentification) au lieu de renvoyer un token. L'administration se
+    // fait sur l'espace web, pas dans l'app.
+    if (data['mfaRequired'] == true) {
+      throw const ServerException(
+        'Ce compte administrateur se connecte sur admin.lahiyarouwadayaro.com, pas dans l’application.',
+      );
+    }
     await _apiClient.saveToken(data['token'] as String);
     return UserModel.fromJson(data['user'] as Map<String, dynamic>);
   }

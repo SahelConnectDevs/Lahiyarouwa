@@ -1,14 +1,21 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { api, ApiError, getToken, setToken, setUnauthorizedHandler } from '../api/client';
-import type { AuthResult, PublicUser } from '../api/types';
+import type { AuthResult, LoginChallenge, PublicUser, ResendResult } from '../api/types';
 
 type Status = 'unknown' | 'unauthenticated' | 'authenticated';
 
 interface AuthState {
   status: Status;
   user: PublicUser | null;
-  login(email: string, password: string): Promise<void>;
+  /**
+   * Première étape : e-mail + mot de passe. Renvoie la connexion en attente
+   * du code envoyé par e-mail (double authentification des admins).
+   */
+  login(email: string, password: string): Promise<LoginChallenge>;
+  /** Deuxième étape : code à 6 chiffres reçu par e-mail. */
+  verifyCode(challengeToken: string, code: string): Promise<void>;
+  resendCode(challengeToken: string): Promise<ResendResult>;
   logout(): void;
 }
 
@@ -53,18 +60,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [logout]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const result = await api<AuthResult>('/auth/login', {
+    const result = await api<AuthResult | LoginChallenge>('/auth/login', {
       method: 'POST',
       body: { email, password },
     });
-    // L'API accepte la connexion de tout compte ; seul le rôle admin entre ici.
+    // L'API connecte directement les comptes sans double authentification,
+    // c.-à-d. les non-admins : ils n'ont pas accès à l'administration.
+    if (!('mfaRequired' in result)) throw new ApiError(403, NOT_ADMIN);
+    return result;
+  }, []);
+
+  const verifyCode = useCallback(async (challengeToken: string, code: string) => {
+    const result = await api<AuthResult>('/auth/login/verify', {
+      method: 'POST',
+      body: { challengeToken, code },
+    });
     if (result.user.role !== 'admin') throw new ApiError(403, NOT_ADMIN);
     setToken(result.token);
     setUser(result.user);
     setStatus('authenticated');
   }, []);
 
-  const value = useMemo(() => ({ status, user, login, logout }), [status, user, login, logout]);
+  const resendCode = useCallback(
+    (challengeToken: string) =>
+      api<ResendResult>('/auth/login/resend', { method: 'POST', body: { challengeToken } }),
+    [],
+  );
+
+  const value = useMemo(
+    () => ({ status, user, login, verifyCode, resendCode, logout }),
+    [status, user, login, verifyCode, resendCode, logout],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

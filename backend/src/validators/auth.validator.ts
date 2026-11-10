@@ -26,6 +26,25 @@ export const loginValidator = [
   body('password').isString().notEmpty().withMessage('Mot de passe requis.'),
 ];
 
+const challengeTokenRule = body('challengeToken')
+  .isString()
+  .isLength({ min: 20, max: 100 })
+  .withMessage('Connexion en attente introuvable. Reconnectez-vous.');
+
+/** Deuxième étape de la connexion admin : code à 6 chiffres reçu par e-mail. */
+export const verifyLoginCodeValidator = [
+  challengeTokenRule,
+  body('code')
+    .isString()
+    .withMessage('Le code contient 6 chiffres.')
+    .bail()
+    .customSanitizer((value: string) => value.replace(/\s/g, ''))
+    .matches(/^\d{6}$/)
+    .withMessage('Le code contient 6 chiffres.'),
+];
+
+export const resendLoginCodeValidator = [challengeTokenRule];
+
 export const updateProfileValidator = [
   body('name')
     .optional()

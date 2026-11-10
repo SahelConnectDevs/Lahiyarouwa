@@ -956,3 +956,19 @@ textarea {
   margin-top: 6px;
   padding: 11px 16px;
 }
+.login-card .code-input {
+  font-size: 1.6rem;
+  letter-spacing: 0.4em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.login-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 14px;
+}
+.login-actions .btn {
+  margin-top: 0;
+  padding: 6px 8px;
+}
