@@ -79,10 +79,10 @@ Conventions:
 - `src/api/types.ts` is the only copy of the API's response shapes on this side; update it together with the backend service it mirrors.
 - Accounts (agents, beneficiaries) are created from `UsersPage`/`AgentsPage` via `components/accounts.tsx` (`CreateUserModal`, `TemporaryPassword`); `UserDetailPage` resets a password. `/mon-compte` (`AccountPage`) changes the admin's own password and `updateSession()` stores the new token.
 - Login is two steps (`LoginPage`): password → `LoginChallenge`, then the emailed code → `verifyCode`. A login that returns a token directly is a non-admin and is refused.
-- Only `role === 'admin'` gets past `AuthContext` (the API accepts any login; the role check is UX — the real gate is `requireRole('admin')` on `/api/admin`). Token in `sessionStorage`, not `localStorage`.
+- Two roles get past `AuthContext`: `admin` (back office, email + 2FA code) and `relais` (**agent space**, phone + password, no code). The login field takes either an email or a phone. `App.tsx` renders a separate route tree per role: agents get `pages/agent/*` (home with the week's reminders, beneficiaries, beneficiary detail with follow-up notes, alerts), backed only by `/api/relais/*`, and `Layout` switches nav (`AGENT_NAV`). The role check is UX; the real gates are `requireRole('admin')` / `requireRole('relais')` on the API. Token in `sessionStorage`, not `localStorage`.
 - Pages load data with `useApi(load, key)` (abortable, `reload()`); filters/pagination live in the URL query string so views are linkable.
 - Admin-editable content (`conseils`, `methodes-pf`, `vaccins`, `cpn-etapes`) uses the one generic `src/content/ContentPage.tsx`, driven by field declarations in `src/content/configs.tsx` that mirror the backend validators. A new content type = backend `mountContent(...)` + a config entry + a nav link, not a new page.
-- Never display a beneficiary's health follow-up in admin-web: that data is only for her `relais`, with her consent (see the backend rules above).
+- Never display a beneficiary's health follow-up in the **admin** pages: that data is only for her `relais`, with her consent. The agent pages show it only through `/api/relais/*`, which already enforces assignment + `partageRelais` (see the backend rules above). Agent pages are used on phones: lists are `.item-list` cards with `tel:` call buttons, not tables.
 
 ## Mobile app architecture
 

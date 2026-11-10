@@ -16,6 +16,22 @@ En production : **https://admin.lahiyarouwadayaro.com** (nginx sur le même VPS 
 | Agents communautaires | `GET /admin/relais` | Charge de chaque agent, affectation des femmes sans agent |
 | Conseils santé, Méthodes PF, Calendrier vaccinal, Étapes CPN | `/admin/conseils`, `/admin/methodes-pf`, `/admin/vaccins`, `/admin/cpn-etapes` | Contenus affichés dans l'app (CRUD) |
 
+## Espace agent communautaire
+
+Les agents (rôle `relais`) se connectent sur le même site avec leur **numéro de
+téléphone** et leur mot de passe. Ils arrivent sur un espace à part, pensé pour
+le téléphone :
+
+| Écran | API | Rôle |
+| --- | --- | --- |
+| Accueil | `GET /relais/tableau-de-bord` | Alertes à traiter, chiffres clés, rendez-vous de la semaine (et manqués) à rappeler |
+| Mes bénéficiaires | `GET /relais/beneficiaires` | Femmes assignées, alertes ouvertes, grossesse et méthode PF (si partage autorisé), bouton Appeler |
+| Fiche bénéficiaire | `GET /relais/beneficiaires/:id`, `POST .../suivis` | Suivi et rendez-vous (si partage autorisé), alertes à traiter, historique et ajout de suivis (appel, visite, orientation) |
+| Mes alertes | `GET/PATCH /relais/alertes` | Alertes de ses bénéficiaires : statut et note |
+
+Un agent ne voit que les femmes qui lui sont assignées, et leur suivi de santé
+seulement si elles l'ont autorisé (règles appliquées par l'API).
+
 Les détails du suivi de santé d'une femme ne sont **pas** affichés dans l'admin :
 seul son agent communautaire y a accès, et seulement si elle a donné son accord
 (`partageRelais`, voir `backend/src/services/relais.service.ts`).

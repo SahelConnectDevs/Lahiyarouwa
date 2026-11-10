@@ -5,6 +5,10 @@ import { Layout } from './components/Layout';
 import { Loading } from './components/ui';
 import { ContentPage } from './content/ContentPage';
 import { AccountPage, ForcedPasswordChange } from './pages/AccountPage';
+import { AgentAlertsPage } from './pages/agent/AgentAlertsPage';
+import { AgentHomePage } from './pages/agent/AgentHomePage';
+import { BeneficiariesPage } from './pages/agent/BeneficiariesPage';
+import { BeneficiaryPage } from './pages/agent/BeneficiaryPage';
 import { AgentsPage } from './pages/AgentsPage';
 import { AlertsPage } from './pages/AlertsPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -23,6 +27,21 @@ function Root() {
   }
   if (status === 'unauthenticated') return <LoginPage />;
   if (user?.mustChangePassword) return <ForcedPasswordChange />;
+  if (user?.role === 'relais') {
+    // Espace agent : uniquement ses bénéficiaires, ses alertes et ses suivis.
+    return (
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<AgentHomePage />} />
+          <Route path="beneficiaires" element={<BeneficiariesPage />} />
+          <Route path="beneficiaires/:id" element={<BeneficiaryPage />} />
+          <Route path="alertes" element={<AgentAlertsPage />} />
+          <Route path="mon-compte" element={<AccountPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    );
+  }
   return (
     <Routes>
       <Route element={<Layout />}>

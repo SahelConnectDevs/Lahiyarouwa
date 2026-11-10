@@ -9,10 +9,11 @@ interface AuthState {
   status: Status;
   user: PublicUser | null;
   /**
-   * Première étape : e-mail + mot de passe. Renvoie la connexion en attente
-   * du code envoyé par e-mail (double authentification des admins).
+   * Première étape : identifiant (e-mail ou téléphone) + mot de passe.
+   * Un admin reçoit un code par e-mail : renvoie la connexion en attente.
+   * Un agent est connecté directement : renvoie null.
    */
-  login(email: string, password: string): Promise<LoginChallenge>;
+  login(identifier: string, password: string): Promise<LoginChallenge | null>;
   /** Deuxième étape : code à 6 chiffres reçu par e-mail. */
   verifyCode(challengeToken: string, code: string): Promise<void>;
   resendCode(challengeToken: string): Promise<ResendResult>;
@@ -23,7 +24,11 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | null>(null);
 
-const NOT_ADMIN = "Ce compte n'a pas accès à l'administration.";
+const NOT_ALLOWED =
+  "Ce compte n'a pas accès à cet espace. Il est réservé aux administrateurs et aux agents communautaires.";
+
+/** Rôles admis : les admins (back-office) et les agents (espace agent). */
+const canEnter = (role: string) => role === 'admin' || role === 'relais';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null);
@@ -49,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     api<PublicUser>('/auth/me')
       .then((me) => {
         if (cancelled) return;
-        if (me.role !== 'admin') return logout();
+        if (!canEnter(me.role)) return logout();
         setUser(me);
         setStatus('authenticated');
       })
@@ -61,15 +66,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, [logout]);
 
-  const login = useCallback(async (email: string, password: string) => {
+  const login = useCallback(async (identifier: string, password: string) => {
+    const credentials = identifier.includes('@') ? { email: identifier } : { phone: identifier };
     const result = await api<AuthResult | LoginChallenge>('/auth/login', {
       method: 'POST',
-      body: { email, password },
+      body: { ...credentials, password },
     });
-    // L'API connecte directement les comptes sans double authentification,
-    // c.-à-d. les non-admins : ils n'ont pas accès à l'administration.
-    if (!('mfaRequired' in result)) throw new ApiError(403, NOT_ADMIN);
-    return result;
+    if ('mfaRequired' in result) return result;
+    // Connexion directe (sans code) : seuls les agents entrent ici.
+    if (result.user.role !== 'relais') throw new ApiError(403, NOT_ALLOWED);
+    setToken(result.token);
+    setUser(result.user);
+    setStatus('authenticated');
+    return null;
   }, []);
 
   const verifyCode = useCallback(async (challengeToken: string, code: string) => {
@@ -77,7 +86,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       method: 'POST',
       body: { challengeToken, code },
     });
-    if (result.user.role !== 'admin') throw new ApiError(403, NOT_ADMIN);
+    if (!canEnter(result.user.role)) throw new ApiError(403, NOT_ALLOWED);
     setToken(result.token);
     setUser(result.user);
     setStatus('authenticated');

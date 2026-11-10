@@ -82,7 +82,7 @@ export interface Stats {
   beneficiairesSansAgent: number;
 }
 
-interface UserRef {
+export interface UserRef {
   id: string;
   name: string;
   phone?: string | null;
@@ -106,4 +106,69 @@ export interface Alert {
 export interface ContentItem {
   id: string;
   [field: string]: unknown;
+}
+
+// --- Espace agent communautaire (backend/src/services/relais.service.ts) ---
+
+export type FollowUpType = 'appel' | 'visite' | 'orientation' | 'autre';
+export type ReminderType = 'pf' | 'cpn' | 'vaccin';
+
+/** Rappel unifié (PF, CPN, vaccin) d'une bénéficiaire consentante. */
+export interface Reminder {
+  type: ReminderType;
+  titre: string;
+  date: string;
+  enRetard: boolean;
+  ref: string;
+}
+
+export interface AgentReminder extends Reminder {
+  beneficiaire: { id: string; name: string; phone: string | null };
+}
+
+export interface AgentDashboard {
+  beneficiaires: number;
+  consentantes: number;
+  alertesNouvelles: number;
+  alertesEnCours: number;
+  /** Rappels des 7 prochains jours (et en retard) des bénéficiaires consentantes. */
+  rappels: AgentReminder[];
+}
+
+export interface PfReminder {
+  echeance: string;
+  joursRestants: number;
+  enRetard: boolean;
+  aPrevoir: boolean;
+}
+
+export interface BeneficiarySummary {
+  id: string;
+  name: string;
+  phone: string | null;
+  secteur: string | null;
+  partageRelais: boolean;
+  alertesOuvertes: number;
+  /** null tant que la bénéficiaire n'a pas autorisé le partage. */
+  suivi: {
+    grossesse: { semaine: number; termePrevu: string } | null;
+    planification: { methode: string; prochainRappel: PfReminder | null } | null;
+  } | null;
+}
+
+export interface FollowUp {
+  id: string;
+  type: FollowUpType;
+  date: string;
+  note?: string;
+  orienteVers?: string;
+  alerte?: string;
+  relais: UserRef | null;
+  createdAt: string;
+}
+
+export interface BeneficiaryDetail extends BeneficiarySummary {
+  alertes: Alert[];
+  suivis: FollowUp[];
+  rappels: Reminder[] | null;
 }

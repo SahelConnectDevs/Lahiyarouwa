@@ -3,7 +3,20 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router';
 
 import { useAuth } from '../auth/AuthContext';
 
-const NAV: { section: string; links: { to: string; label: string; icon: string }[] }[] = [
+type NavGroup = { section: string; links: { to: string; label: string; icon: string }[] };
+
+const AGENT_NAV: NavGroup[] = [
+  {
+    section: 'Mon suivi',
+    links: [
+      { to: '/', label: 'Accueil', icon: '⌂' },
+      { to: '/beneficiaires', label: 'Mes bénéficiaires', icon: '♀' },
+      { to: '/alertes', label: 'Mes alertes', icon: '!' },
+    ],
+  },
+];
+
+const NAV: NavGroup[] = [
   {
     section: 'Pilotage',
     links: [
@@ -31,6 +44,8 @@ const NAV: { section: string; links: { to: string; label: string; icon: string }
 
 export function Layout() {
   const { user, logout } = useAuth();
+  const isAgent = user?.role === 'relais';
+  const nav = isAgent ? AGENT_NAV : NAV;
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const [lastPath, setLastPath] = useState(location.pathname);
@@ -48,11 +63,11 @@ export function Layout() {
           <img src="/logo.png" alt="" width="40" height="40" />
           <div>
             <strong>Lahiyar Ouwa</strong>
-            <span>Administration</span>
+            <span>{isAgent ? 'Espace agent' : 'Administration'}</span>
           </div>
         </div>
         <nav aria-label="Navigation principale">
-          {NAV.map((group) => (
+          {nav.map((group) => (
             <div key={group.section} className="nav-group">
               <span className="nav-section">{group.section}</span>
               {group.links.map((link) => (
@@ -73,7 +88,7 @@ export function Layout() {
             </span>
             <div>
               <strong>{user?.name}</strong>
-              <span>{user?.email}</span>
+              <span>{user?.email ?? user?.phone}</span>
             </div>
           </Link>
           <button type="button" className="btn btn-ghost btn-block" onClick={logout}>
@@ -95,7 +110,7 @@ export function Layout() {
           >
             ☰
           </button>
-          <strong>Lahiyar Ouwa · Admin</strong>
+          <strong>Lahiyar Ouwa · {isAgent ? 'Agent' : 'Admin'}</strong>
         </div>
         <main className="content">
           <Outlet />

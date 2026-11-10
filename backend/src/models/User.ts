@@ -40,7 +40,21 @@ const userSchema = new Schema(
     // envoyées — jamais son suivi (grossesse, méthode de PF, rappels).
     partageRelais: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    // Quand un User est inclus dans une autre réponse (populate : alerte,
+    // note de suivi), même forme que les autres documents : `id` en chaîne,
+    // jamais de hash. Les réponses de profil passent par toPublicUser().
+    toJSON: {
+      versionKey: false,
+      transform(_doc: unknown, ret: Record<string, unknown>) {
+        ret.id = String(ret._id);
+        delete ret._id;
+        delete ret.passwordHash;
+        return ret;
+      },
+    },
+  },
 );
 
 // Uniques seulement quand le champ existe : un compte peut n'avoir qu'un

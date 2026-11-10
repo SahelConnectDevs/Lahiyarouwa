@@ -1,4 +1,4 @@
-import type { AlertStatus, Role } from '../api/types';
+import type { AlertStatus, FollowUpType, ReminderType, Role } from '../api/types';
 
 export const ROLE_LABELS: Record<Role, string> = {
   user: 'Utilisatrice',
@@ -31,4 +31,22 @@ export function formatDateTime(value: string | null | undefined): string {
 
 export function formatNumber(value: number | undefined): string {
   return new Intl.NumberFormat('fr-FR').format(value ?? 0);
+}
+
+export const FOLLOW_UP_LABELS: Record<FollowUpType, string> = {
+  appel: 'Appel',
+  visite: 'Visite à domicile',
+  orientation: 'Orientation vers un centre',
+  autre: 'Autre',
+};
+
+export const REMINDER_LABELS: Record<ReminderType, string> = {
+  pf: 'Planification familiale',
+  cpn: 'Consultation prénatale',
+  vaccin: 'Vaccin',
+};
+
+/** Lien d'appel : le téléphone de l'agent compose directement le numéro. */
+export function telHref(phone: string): string {
+  return `tel:${phone.replace(/\s/g, '')}`;
 }

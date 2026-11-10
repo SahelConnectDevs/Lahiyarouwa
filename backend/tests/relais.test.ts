@@ -107,6 +107,9 @@ describe('Alertes et accompagnement', () => {
     const alerts = await request(app).get('/api/relais/alertes?statut=nouvelle').set(bearer(moussa.token));
     expect(alerts.body).toHaveLength(1);
     expect(alerts.body[0].user).toMatchObject({ name: 'Aïcha' });
+    // Utilisatrice incluse avec son id (lien vers la fiche dans l'espace agent).
+    expect(alerts.body[0].user.id).toEqual(expect.any(String));
+    expect(alerts.body[0].user._id).toBeUndefined();
 
     // Un autre agent ne peut pas la traiter.
     const forbidden = await request(app)

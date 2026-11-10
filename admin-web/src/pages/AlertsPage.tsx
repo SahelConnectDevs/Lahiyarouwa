@@ -137,7 +137,23 @@ export function AlertsPage() {
   );
 }
 
-function AlertForm({ alert, onDone }: { alert: Alert; onDone(): void }) {
+/**
+ * Mise à jour du statut et de la note d'une alerte. Partagé avec l'espace
+ * agent, qui passe son propre endpoint et le lien vers sa fiche bénéficiaire.
+ */
+export function AlertForm({
+  alert,
+  onDone,
+  endpoint = '/admin/alertes',
+  userLink = (id: string) => `/utilisateurs/${id}`,
+  showAgent = true,
+}: {
+  alert: Alert;
+  onDone(): void;
+  endpoint?: string;
+  userLink?: (id: string) => string;
+  showAgent?: boolean;
+}) {
   const [statut, setStatut] = useState<AlertStatus>(alert.statut);
   const [note, setNote] = useState(alert.noteSuivi ?? '');
   const [error, setError] = useState<string | null>(null);
@@ -148,7 +164,7 @@ function AlertForm({ alert, onDone }: { alert: Alert; onDone(): void }) {
     setSaving(true);
     setError(null);
     try {
-      await api(`/admin/alertes/${alert.id}`, { method: 'PATCH', body: { statut, noteSuivi: note.trim() } });
+      await api(`${endpoint}/${alert.id}`, { method: 'PATCH', body: { statut, noteSuivi: note.trim() } });
       onDone();
     } catch (err) {
       setError(errorMessage(err));
@@ -163,7 +179,7 @@ function AlertForm({ alert, onDone }: { alert: Alert; onDone(): void }) {
           <span>Femme</span>
           <strong>
             {alert.user ? (
-              <Link to={`/utilisateurs/${alert.user.id}`}>
+              <Link to={userLink(alert.user.id)}>
                 {alert.user.name} · {alert.user.phone}
               </Link>
             ) : (
@@ -179,10 +195,14 @@ function AlertForm({ alert, onDone }: { alert: Alert; onDone(): void }) {
           <span>Signalée le</span>
           <strong>{formatDateTime(alert.createdAt)}</strong>
         </li>
-        <li>
-          <span>Agent</span>
-          <strong>{alert.relais ? `${alert.relais.name} · ${alert.relais.phone ?? ''}` : 'Aucun agent assigné'}</strong>
-        </li>
+        {showAgent && (
+          <li>
+            <span>Agent</span>
+            <strong>
+              {alert.relais ? `${alert.relais.name} · ${alert.relais.phone ?? ''}` : 'Aucun agent assigné'}
+            </strong>
+          </li>
+        )}
         {alert.traiteePar && (
           <li>
             <span>Traitée par</span>

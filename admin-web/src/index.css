@@ -1010,3 +1010,91 @@ a.me:hover {
   margin-top: 0;
   padding: 6px 8px;
 }
+
+/* --- Espace agent : listes en cartes, pensées pour le téléphone -------- */
+
+.agent-callout {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin-bottom: 16px;
+}
+.item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.item-list.card {
+  padding: 4px 20px;
+}
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.item:last-child {
+  border-bottom: 0;
+}
+.item-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 16px;
+  border-left: 2px solid var(--pink-soft);
+}
+.timeline li {
+  position: relative;
+  padding: 0 0 16px 12px;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: -23px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--pink);
+}
+.timeline-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+}
+.timeline p {
+  margin: 4px 0 0;
+}
+@media (max-width: 640px) {
+  .item {
+    align-items: flex-start;
+  }
+  .item-list.card {
+    padding: 4px 14px;
+  }
+}
+
+.stat-grid + .card {
+  margin-top: 16px;
+}

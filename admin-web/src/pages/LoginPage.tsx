@@ -10,7 +10,7 @@ import { useAuth } from '../auth/AuthContext';
  */
 export function LoginPage() {
   const { login, verifyCode, resendCode } = useAuth();
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [challenge, setChallenge] = useState<LoginChallenge | null>(null);
   const [code, setCode] = useState('');
@@ -41,7 +41,9 @@ export function LoginPage() {
     setError(null);
     setSubmitting(true);
     try {
-      const result = await login(email.trim(), password);
+      const result = await login(identifier.trim(), password);
+      // null : agent connecté directement, le routeur affiche son espace.
+      if (!result) return;
       setChallenge(result);
       setResendIn(result.resendIn);
       setCode('');
@@ -154,8 +156,8 @@ export function LoginPage() {
       ) : (
         <form className="login-card" onSubmit={onSubmitPassword}>
           <img src="/logo.png" alt="Lahiyar Ouwa Da Yaro" width="72" height="72" />
-          <h1>Administration</h1>
-          <p className="muted">Connectez-vous avec votre compte administrateur.</p>
+          <h1>Connexion</h1>
+          <p className="muted">Espace des administrateurs et des agents communautaires.</p>
 
           {error && (
             <div className="notice notice-error" role="alert">
@@ -164,14 +166,19 @@ export function LoginPage() {
           )}
 
           <label className="field">
-            <span>E-mail</span>
+            <span>E-mail ou numéro de téléphone</span>
             <input
-              type="email"
+              type="text"
+              inputMode="email"
               autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@… ou 90 12 34 56"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
             />
+            <small className="hint">Administrateurs : e-mail. Agents communautaires : numéro de téléphone.</small>
           </label>
           <label className="field">
             <span>Mot de passe</span>
@@ -184,7 +191,7 @@ export function LoginPage() {
             />
           </label>
           <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-            {submitting ? 'Envoi du code…' : 'Se connecter'}
+            {submitting ? 'Connexion…' : 'Se connecter'}
           </button>
         </form>
       )}
