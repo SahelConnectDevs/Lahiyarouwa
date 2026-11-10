@@ -41,6 +41,15 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json(user);
 });
 
+export const createUser = asyncHandler(async (req: Request, res: Response) => {
+  const result = await adminService.createUser(bodyData<Parameters<typeof adminService.createUser>[0]>(req));
+  res.status(201).json(result);
+});
+
+export const resetPassword = asyncHandler(async (req: Request, res: Response) => {
+  res.status(200).json(await adminService.resetPassword(currentUserId(req), routeParam(req, 'id')));
+});
+
 export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
   await adminService.deleteUser(currentUserId(req), routeParam(req, 'id'));
   res.status(204).end();

@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router';
 
 import { api } from '../api/client';
 import type { AdminUser, Agent, Paginated, Role } from '../api/types';
+import { CreateUserModal } from '../components/accounts';
 import { Badge, Empty, ErrorBox, Loading, PageHeader, Pagination } from '../components/ui';
 import { useApi } from '../hooks/useApi';
 import { formatDate, ROLE_LABELS } from '../utils/format';
@@ -13,6 +14,7 @@ export function UsersPage() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const [search, setSearch] = useState(params.get('search') ?? '');
+  const [createOpen, setCreateOpen] = useState(false);
 
   const filters = {
     search: params.get('search') ?? '',
@@ -59,6 +61,17 @@ export function UsersPage() {
       <PageHeader
         title="Utilisatrices et comptes"
         subtitle="Tous les comptes de l’application : utilisatrices, agents communautaires et administrateurs."
+        actions={
+          <button type="button" className="btn btn-primary" onClick={() => setCreateOpen(true)}>
+            + Nouveau compte
+          </button>
+        }
+      />
+      <CreateUserModal
+        open={createOpen}
+        defaultRole="user"
+        onClose={() => setCreateOpen(false)}
+        onCreated={(account) => navigate(`/utilisateurs/${account.user.id}`)}
       />
 
       <div className="filters">

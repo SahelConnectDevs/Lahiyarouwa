@@ -6,11 +6,13 @@ import { ContractionSession } from '../models/ContractionSession';
 import { ContraceptionRecord } from '../models/ContraceptionRecord';
 import { ContraceptiveMethod } from '../models/ContraceptiveMethod';
 import { Pregnancy } from '../models/Pregnancy';
+import { LoginChallenge } from '../models/LoginChallenge';
 import { User, type Role, type UserDocument } from '../models/User';
 import { VaccinationRecord } from '../models/VaccinationRecord';
 import { AppError } from '../utils/AppError';
 import { addDays } from '../utils/dates';
 import { escapeRegex, paginated, type Paginated, type Pagination } from '../utils/pagination';
+import { hashPassword, temporaryPassword } from '../utils/password';
 import { toPublicUser, type PublicUser } from './auth.service';
 import { deleteUserAndData } from './userData.service';
 
@@ -166,6 +168,13 @@ export async function updateUser(
     }
   }
 
+  if (input.role === 'admin' && user.role !== 'admin' && !user.email) {
+    // La connexion admin exige un code envoyé à l'e-mail du compte.
+    throw AppError.validation('Données invalides.', {
+      role: 'Un administrateur doit avoir une adresse e-mail (le code de connexion y est envoyé).',
+    });
+  }
+
   if (input.role !== undefined && input.role !== user.role) {
     // Un agent qui perd son rôle libère ses bénéficiaires et ses alertes ouvertes.
     if (user.role === 'relais') await releaseBeneficiaries(user._id.toString());
@@ -206,6 +215,79 @@ export async function listAgents() {
       alertesOuvertes: await Alert.countDocuments({ relais: agent._id, statut: { $ne: 'traitee' } }),
     })),
   );
+}
+
+async function assertActiveAgent(relaisId: string): Promise<void> {
+  if (!(await User.exists({ _id: relaisId, role: 'relais', isActive: true }))) {
+    throw AppError.validation('Données invalides.', {
+      relais: "Ce compte n'est pas un agent communautaire actif.",
+    });
+  }
+}
+
+export interface CreatedAccount {
+  user: AdminUser;
+  /** Affiché une seule fois à l'admin, à transmettre à la personne. */
+  temporaryPassword: string;
+}
+
+/**
+ * Crée un compte depuis l'admin-web (agent communautaire, ou bénéficiaire
+ * sans smartphone) avec un mot de passe provisoire à changer à la première
+ * connexion. Le consentement au partage avec l'agent (`partageRelais`) reste
+ * à false : seule la bénéficiaire peut le donner.
+ */
+export async function createUser(input: {
+  name: string;
+  phone: string;
+  email?: string;
+  role: 'user' | 'relais';
+  secteur?: string;
+  relais?: string;
+}): Promise<CreatedAccount> {
+  if (await User.exists({ phone: input.phone })) {
+    throw AppError.validation('Données invalides.', { phone: 'Un compte existe déjà avec ce numéro.' });
+  }
+  if (input.email && (await User.exists({ email: input.email }))) {
+    throw AppError.validation('Données invalides.', { email: 'Un compte existe déjà avec cet e-mail.' });
+  }
+  const relais = input.role === 'user' ? input.relais : undefined;
+  if (relais) await assertActiveAgent(relais);
+
+  const password = temporaryPassword();
+  const user = await User.create({
+    name: input.name,
+    phone: input.phone,
+    email: input.email || undefined,
+    role: input.role,
+    secteur: input.secteur || undefined,
+    relais,
+    passwordHash: await hashPassword(password),
+    mustChangePassword: true,
+  });
+  return { user: toAdminUser(user), temporaryPassword: password };
+}
+
+/**
+ * Remplace le mot de passe d'un compte par un mot de passe provisoire (mot
+ * de passe oublié) : déconnecte tous ses appareils et annule ses connexions
+ * en attente de code. Pour son propre compte, un admin change son mot de
+ * passe normalement (il doit connaître l'actuel).
+ */
+export async function resetPassword(adminId: string, userId: string): Promise<{ temporaryPassword: string }> {
+  if (adminId === userId) {
+    throw AppError.forbidden('Changez votre propre mot de passe depuis « Mon compte ».');
+  }
+  const user = await User.findById(userId);
+  if (!user) throw AppError.notFound('Utilisateur introuvable.');
+
+  const password = temporaryPassword();
+  user.set('passwordHash', await hashPassword(password));
+  user.mustChangePassword = true;
+  user.tokenVersion += 1;
+  await user.save();
+  await LoginChallenge.deleteMany({ user: user._id });
+  return { temporaryPassword: password };
 }
 
 export async function deleteUser(adminId: string, userId: string): Promise<void> {

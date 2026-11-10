@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router';
+import { Link, NavLink, Outlet, useLocation } from 'react-router';
 
 import { useAuth } from '../auth/AuthContext';
 
@@ -67,7 +67,7 @@ export function Layout() {
           ))}
         </nav>
         <div className="sidebar-footer">
-          <div className="me">
+          <Link to="/mon-compte" className="me" title="Mon compte">
             <span className="avatar" aria-hidden="true">
               {user?.name.charAt(0).toUpperCase()}
             </span>
@@ -75,7 +75,7 @@ export function Layout() {
               <strong>{user?.name}</strong>
               <span>{user?.email}</span>
             </div>
-          </div>
+          </Link>
           <button type="button" className="btn btn-ghost btn-block" onClick={logout}>
             Se déconnecter
           </button>

@@ -4,7 +4,7 @@ import { ALERT_STATUSES } from '../models/Alert';
 import { CONSEIL_CATEGORIES, LANGUES } from '../models/Conseil';
 import { ROLES } from '../models/User';
 import { VACCINE_TARGETS } from '../models/Vaccine';
-import { nullable, optionalText, paginationQuery } from './common';
+import { nullable, optionalText, paginationQuery, phoneField } from './common';
 
 /** En création, les champs `required` sont obligatoires ; en modification (PATCH), tout est optionnel. */
 const req = (chain: ValidationChain, partial: boolean): ValidationChain =>
@@ -46,6 +46,21 @@ export const updateUserValidator = [
     (v) => typeof v === 'string' && v.trim().length <= 120,
     'Secteur invalide (120 caractères maximum).',
   ),
+];
+
+/** Création d'un compte par l'admin : agent communautaire ou bénéficiaire. */
+export const createUserValidator = [
+  body('name').isString().trim().notEmpty().withMessage('Le nom est requis.').isLength({ max: 100 }),
+  phoneField('phone'),
+  body('email').optional({ values: 'falsy' }).isEmail().withMessage('E-mail invalide.').trim().toLowerCase(),
+  body('role').isIn(['user', 'relais']).withMessage('Rôle invalide (bénéficiaire ou agent).'),
+  body('secteur')
+    .optional({ values: 'falsy' })
+    .isString()
+    .trim()
+    .isLength({ max: 120 })
+    .withMessage('Secteur invalide (120 caractères maximum).'),
+  body('relais').optional({ values: 'falsy' }).isMongoId().withMessage('Agent invalide.'),
 ];
 
 // --- Alertes ---------------------------------------------------------------

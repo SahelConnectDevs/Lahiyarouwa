@@ -16,6 +16,8 @@ interface AuthState {
   /** Deuxième étape : code à 6 chiffres reçu par e-mail. */
   verifyCode(challengeToken: string, code: string): Promise<void>;
   resendCode(challengeToken: string): Promise<ResendResult>;
+  /** Remplace token et profil (après un changement de mot de passe). */
+  updateSession(result: AuthResult): void;
   logout(): void;
 }
 
@@ -87,9 +89,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const updateSession = useCallback((result: AuthResult) => {
+    setToken(result.token);
+    setUser(result.user);
+  }, []);
+
   const value = useMemo(
-    () => ({ status, user, login, verifyCode, resendCode, logout }),
-    [status, user, login, verifyCode, resendCode, logout],
+    () => ({ status, user, login, verifyCode, resendCode, updateSession, logout }),
+    [status, user, login, verifyCode, resendCode, updateSession, logout],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

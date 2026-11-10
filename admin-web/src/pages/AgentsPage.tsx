@@ -1,25 +1,40 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 import { api, errorMessage } from '../api/client';
 import type { AdminUser, Agent, Paginated } from '../api/types';
+import { CreateUserModal } from '../components/accounts';
 import { Badge, Empty, ErrorBox, Loading, PageHeader, Pagination } from '../components/ui';
 import { useApi } from '../hooks/useApi';
 import { formatDate } from '../utils/format';
 
 export function AgentsPage() {
   const agents = useApi((signal) => api<Agent[]>('/admin/relais', { signal }), 'agents');
+  const navigate = useNavigate();
+  const [createOpen, setCreateOpen] = useState(false);
 
   return (
     <>
       <PageHeader
         title="Agents communautaires"
         subtitle="Les relais qui accompagnent les femmes sur le terrain, et leur charge de suivi."
+        actions={
+          <button type="button" className="btn btn-primary" onClick={() => setCreateOpen(true)}>
+            + Nouvel agent
+          </button>
+        }
+      />
+      <CreateUserModal
+        open={createOpen}
+        defaultRole="relais"
+        onClose={() => setCreateOpen(false)}
+        onCreated={(account) => navigate(`/utilisateurs/${account.user.id}`)}
       />
 
       <div className="notice notice-info">
-        Pour ajouter un agent : il crée d’abord son compte dans l’application, puis vous ouvrez sa fiche dans{' '}
-        <Link to="/utilisateurs">Utilisatrices et comptes</Link> et choisissez le rôle « Agent communautaire ».
+        Créez le compte ici puis transmettez à l’agent son mot de passe provisoire : il se connecte dans l’application
+        avec son numéro de téléphone. Un compte déjà inscrit peut aussi devenir agent depuis sa fiche dans{' '}
+        <Link to="/utilisateurs">Utilisatrices et comptes</Link>.
       </div>
 
       {agents.error && <ErrorBox message={agents.error} onRetry={agents.reload} />}

@@ -41,6 +41,8 @@ En cas d'erreur, la réponse a toujours la forme `{ message, errors? }`. Le cham
 | POST    | `/auth/me/password`  | Avec `currentPassword` + `newPassword`. Renvoie un nouveau token et déconnecte les autres appareils.                                                                                                                                           |
 | DELETE  | `/auth/me`           | Avec `password`. Supprime le compte et toutes ses données (exigence Google Play).                                                                                                                                                              |
 
+**Mot de passe provisoire** : un compte créé ou réinitialisé par un admin a `mustChangePassword: true` dans `user` jusqu'à ce qu'il change son mot de passe (`POST /auth/me/password`). Les clients doivent alors imposer l'écran de changement : c'est fait dans admin-web, pas encore dans l'app mobile.
+
 **Double authentification des admins** : un mot de passe admin correct ne donne pas de token. Un code à 6 chiffres est envoyé à l'e-mail de connexion du compte (valable 10 minutes, usage unique). Au bout de 5 codes faux, il faut ressaisir le mot de passe. Les codes et les jetons ne sont stockés que hachés (collection `loginchallenges`, purgée automatiquement à expiration). Les comptes `user` et `relais` ne sont pas concernés.
 
 Le numéro de téléphone est normalisé : `90 12 34 56`, `+227 90123456` et `0022790123456` désignent tous le compte `+22790123456`.
@@ -103,14 +105,16 @@ Une utilisatrice ne voit jamais les données d'une autre. Si elle demande une re
 
 ### Back-office : `/admin` (rôle `admin` uniquement)
 
-| Méthode            | Chemin                                                   | Détail                                                                                                       |
-| ------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| GET                | `/admin/stats`                                           | Chiffres du tableau de bord.                                                                                 |
-| GET                | `/admin/users?search=&role=&isActive=&page=&limit=`      | Liste paginée `{ items, page, limit, total, totalPages }`.                                                   |
-| GET, PATCH, DELETE | `/admin/users/:id`                                       | Fiche d'un compte. Le PATCH accepte `role` et `isActive` ; désactiver un compte le déconnecte immédiatement. |
-| GET                | `/admin/alertes?statut=`                                 | Alertes, avec le nom et le téléphone de l'utilisatrice.                                                      |
-| PATCH              | `/admin/alertes/:id`                                     | Avec `statut` (`nouvelle`, `en_cours` ou `traitee`) et `noteSuivi`.                                          |
-| CRUD               | `/admin/conseils`, `/admin/vaccins`, `/admin/cpn-etapes` | Contenus de l'app. Un conseil n'apparaît dans l'app qu'une fois `publie: true`.                              |
+| Méthode            | Chemin                                                   | Détail                                                                                                                                                                                                                                                                 |
+| ------------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GET                | `/admin/stats`                                           | Chiffres du tableau de bord.                                                                                                                                                                                                                                           |
+| GET                | `/admin/users?search=&role=&isActive=&page=&limit=`      | Liste paginée `{ items, page, limit, total, totalPages }`.                                                                                                                                                                                                             |
+| POST               | `/admin/users`                                           | Crée un compte agent (`role: 'relais'`) ou bénéficiaire (`role: 'user'`) avec `name`, `phone`, et en option `email`, `secteur`, `relais`. Renvoie `{ user, temporaryPassword }` (8 chiffres, affiché une seule fois). Le consentement `partageRelais` reste à `false`. |
+| GET, PATCH, DELETE | `/admin/users/:id`                                       | Fiche d'un compte. Le PATCH accepte `role`, `isActive`, `relais`, `secteur` ; désactiver un compte le déconnecte immédiatement ; promouvoir admin exige un e-mail.                                                                                                     |
+| POST               | `/admin/users/:id/reset-password`                        | Mot de passe oublié : renvoie `{ temporaryPassword }`, déconnecte tous les appareils du compte. Pas sur son propre compte.                                                                                                                                             |
+| GET                | `/admin/alertes?statut=`                                 | Alertes, avec le nom et le téléphone de l'utilisatrice.                                                                                                                                                                                                                |
+| PATCH              | `/admin/alertes/:id`                                     | Avec `statut` (`nouvelle`, `en_cours` ou `traitee`) et `noteSuivi`.                                                                                                                                                                                                    |
+| CRUD               | `/admin/conseils`, `/admin/vaccins`, `/admin/cpn-etapes` | Contenus de l'app. Un conseil n'apparaît dans l'app qu'une fois `publie: true`.                                                                                                                                                                                        |
 
 ## Déploiement sur le VPS
 

@@ -278,6 +278,7 @@ a {
 }
 .page-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -919,6 +920,43 @@ textarea {
 }
 .modal-body > p:first-child {
   margin-top: 0;
+}
+
+/* --- Comptes : mot de passe provisoire, Mon compte -------------------- */
+
+.temp-password p {
+  margin: 0 0 10px;
+}
+.temp-password-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  background: var(--pink-soft);
+  border-radius: var(--radius);
+}
+.temp-password-value code {
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.card.narrow {
+  max-width: 480px;
+}
+.password-form .btn-block {
+  margin-top: 6px;
+}
+a.me {
+  color: inherit;
+  text-decoration: none;
+  border-radius: 10px;
+}
+a.me:hover {
+  background: var(--surface-2);
 }
 
 /* --- Connexion ------------------------------------------------------- */

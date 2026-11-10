@@ -8,6 +8,7 @@ import type { ContentService } from '../services/content.service';
 import {
   conseilListValidator,
   conseilValidator,
+  createUserValidator,
   cpnStepValidator,
   listAlertsValidator,
   listUsersValidator,
@@ -26,10 +27,13 @@ router.use(requireAuth(), requireRole('admin'));
 router.get('/stats', admin.stats);
 
 router.get('/users', listUsersValidator, validate, admin.listUsers);
+router.post('/users', createUserValidator, validate, admin.createUser);
 router.get('/relais', admin.listAgents);
 router.get('/users/:id', objectIdParam(), validate, admin.getUser);
 router.patch('/users/:id', objectIdParam(), updateUserValidator, validate, admin.updateUser);
 router.delete('/users/:id', objectIdParam(), validate, admin.deleteUser);
+// Mot de passe oublié : renvoie un mot de passe provisoire, affiché une fois.
+router.post('/users/:id/reset-password', objectIdParam(), validate, admin.resetPassword);
 
 router.get('/alertes', listAlertsValidator, validate, admin.listAlerts);
 router.patch('/alertes/:id', objectIdParam(), updateAlertValidator, validate, admin.updateAlert);

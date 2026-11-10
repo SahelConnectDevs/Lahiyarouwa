@@ -34,6 +34,8 @@ export interface PublicUser {
   role: string;
   /** Consentement au partage du suivi avec l'agent communautaire. */
   partageRelais: boolean;
+  /** Mot de passe provisoire (donné par un admin) à changer avant de continuer. */
+  mustChangePassword: boolean;
 }
 
 export interface AuthResult {
@@ -50,6 +52,7 @@ export function toPublicUser(user: UserDocument): PublicUser {
     birthDate: user.birthDate ?? null,
     role: user.role,
     partageRelais: user.partageRelais,
+    mustChangePassword: user.mustChangePassword,
   };
 }
 
@@ -165,7 +168,14 @@ export async function changePassword(
     throw AppError.validation('Données invalides.', { currentPassword: 'Mot de passe actuel incorrect.' });
   }
 
+  if (input.newPassword === input.currentPassword) {
+    throw AppError.validation('Données invalides.', {
+      newPassword: "Choisissez un mot de passe différent de l'actuel.",
+    });
+  }
+
   user.passwordHash = await bcrypt.hash(input.newPassword, SALT_ROUNDS);
+  user.mustChangePassword = false;
   user.tokenVersion += 1;
   await user.save();
 

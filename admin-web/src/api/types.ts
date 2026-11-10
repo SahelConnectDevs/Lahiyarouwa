@@ -20,11 +20,19 @@ export interface PublicUser {
   birthDate: string | null;
   role: Role;
   partageRelais: boolean;
+  /** Mot de passe provisoire (donné par un admin) à changer à la prochaine connexion. */
+  mustChangePassword: boolean;
 }
 
 export interface AuthResult {
   token: string;
   user: PublicUser;
+}
+
+/** Réponse de POST /admin/users : le mot de passe provisoire n'est renvoyé qu'ici. */
+export interface CreatedAccount {
+  user: AdminUser;
+  temporaryPassword: string;
 }
 
 /** Réponse de /auth/login pour un admin : un code a été envoyé par e-mail. */

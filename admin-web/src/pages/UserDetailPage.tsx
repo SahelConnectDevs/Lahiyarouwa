@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router';
 import { api, ApiError, errorMessage } from '../api/client';
 import type { AdminUser, AdminUserDetail, Agent, Paginated, Role } from '../api/types';
 import { useAuth } from '../auth/AuthContext';
+import { TemporaryPassword } from '../components/accounts';
 import { Badge, Empty, ErrorBox, Loading, Modal, PageHeader } from '../components/ui';
 import { useApi } from '../hooks/useApi';
 import { formatDate, formatDateTime, ROLE_LABELS } from '../utils/format';
@@ -38,6 +39,7 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
   const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
 
   const dirty =
     role !== user.role ||
@@ -76,9 +78,14 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
         subtitle={`${ROLE_LABELS[user.role]} · inscrit le ${formatDate(user.createdAt)}`}
         actions={
           !isSelf && (
-            <button type="button" className="btn btn-danger" onClick={() => setDeleteOpen(true)}>
-              Supprimer le compte
-            </button>
+            <>
+              <button type="button" className="btn" onClick={() => setResetOpen(true)}>
+                Réinitialiser le mot de passe
+              </button>
+              <button type="button" className="btn btn-danger" onClick={() => setDeleteOpen(true)}>
+                Supprimer le compte
+              </button>
+            </>
           )
         }
       />
@@ -102,6 +109,16 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
             <li>
               <span>Dernière connexion</span>
               <strong>{formatDateTime(user.lastLoginAt)}</strong>
+            </li>
+            <li>
+              <span>Mot de passe</span>
+              <strong>
+                {user.mustChangePassword ? (
+                  <Badge tone="orange">Provisoire, à changer</Badge>
+                ) : (
+                  <Badge tone="green">Personnel</Badge>
+                )}
+              </strong>
             </li>
             <li>
               <span>Partage avec l’agent</span>
@@ -212,6 +229,15 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
 
       {user.role === 'relais' && <Beneficiaries agentId={user.id} />}
 
+      <ResetPasswordModal
+        open={resetOpen}
+        user={user}
+        onClose={() => {
+          setResetOpen(false);
+          onSaved();
+        }}
+      />
+
       <DeleteUserModal
         open={deleteOpen}
         user={user}
@@ -263,6 +289,69 @@ function Beneficiaries({ agentId }: { agentId: string }) {
           </div>
         ))}
     </section>
+  );
+}
+
+function ResetPasswordModal({ open, user, onClose }: { open: boolean; user: AdminUserDetail; onClose(): void }) {
+  const [password, setPassword] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
+
+  async function onReset() {
+    setResetting(true);
+    setError(null);
+    try {
+      const result = await api<{ temporaryPassword: string }>(`/admin/users/${user.id}/reset-password`, {
+        method: 'POST',
+      });
+      setPassword(result.temporaryPassword);
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setResetting(false);
+    }
+  }
+
+  function close() {
+    setPassword(null);
+    setError(null);
+    onClose();
+  }
+
+  return (
+    <Modal title="Réinitialiser le mot de passe" open={open} onClose={close}>
+      {password ? (
+        <>
+          <TemporaryPassword name={user.name} phone={user.phone ?? user.email} password={password} />
+          <div className="form-actions">
+            <button type="button" className="btn btn-primary" onClick={close}>
+              J’ai noté le mot de passe
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          <p>
+            Un <strong>mot de passe provisoire</strong> va remplacer celui de <strong>{user.name}</strong>. Son ancien
+            mot de passe ne marchera plus et tous ses appareils seront déconnectés. Il devra choisir un nouveau mot de
+            passe à sa prochaine connexion.
+          </p>
+          <p className="muted small">
+            À faire uniquement à la demande de la personne, après avoir vérifié son identité (par exemple en la
+            rappelant à son numéro).
+          </p>
+          {error && <ErrorBox message={error} />}
+          <div className="form-actions">
+            <button type="button" className="btn" onClick={close}>
+              Annuler
+            </button>
+            <button type="button" className="btn btn-primary" disabled={resetting} onClick={onReset}>
+              {resetting ? 'Réinitialisation…' : 'Générer un mot de passe provisoire'}
+            </button>
+          </div>
+        </>
+      )}
+    </Modal>
   );
 }
 

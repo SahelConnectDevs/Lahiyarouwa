@@ -26,6 +26,10 @@ const userSchema = new Schema(
     // invalider tous les JWT déjà émis (voir utils/jwt.ts).
     tokenVersion: { type: Number, default: 0 },
     lastLoginAt: { type: Date },
+    // Mot de passe provisoire donné par un admin (création du compte ou
+    // réinitialisation) : l'utilisateur doit le changer à sa prochaine
+    // connexion. Remis à false par POST /auth/me/password.
+    mustChangePassword: { type: Boolean, default: false },
     // Agent communautaire (compte de rôle 'relais') qui suit cette
     // bénéficiaire, assigné depuis l'admin-web. Ses alertes lui sont routées.
     relais: { type: Schema.Types.ObjectId, ref: 'User', index: true },
