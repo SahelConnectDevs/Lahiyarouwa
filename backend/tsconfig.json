@@ -15,6 +15,6 @@
     "noUncheckedIndexedAccess": true,
     "types": ["node", "jest"]
   },
-  "include": ["src", "tests"],
+  "include": ["src", "tests", "dev"],
   "exclude": ["node_modules", "dist"]
 }

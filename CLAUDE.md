@@ -32,6 +32,7 @@ Run from `backend/` (TypeScript, Node `>=20`, npm).
 
 - `npm install` — install dependencies
 - `npm run dev` — run the API with hot-reload (`tsx watch`), reads `backend/.env` (copy from [.env.example](backend/.env.example) first)
+- `npm run dev:memory` — local demo API with **no MongoDB to install** (`dev/memory-server.ts`): in-memory database, seeded content and fake accounts (`admin@demo.local`, `agent@demo.local`, password `demo-password`), codes/reset links printed to the console; always overrides `.env` so it can never touch production. Pair with `npm run dev` in `admin-web/`.
 - `npm run build` — type-check and compile `src/` to `dist/` (also the type-check gate for CI). Uses [tsconfig.build.json](backend/tsconfig.build.json) (extends the base [tsconfig.json](backend/tsconfig.json) with `rootDir`/`outDir` and `src`-only `include`) so `dist/` mirrors `src/` flatly; the base `tsconfig.json` (which also includes `tests/`, for `ts-jest`) would otherwise make `tsc` emit a nested, wrong `dist/src/` layout — keep using `tsconfig.build.json` for any build/type-check command, not the base file.
 - `npm start` — run the compiled `dist/server.js` (production)
 - `npm run lint` — ESLint (flat config, [eslint.config.mjs](backend/eslint.config.mjs))

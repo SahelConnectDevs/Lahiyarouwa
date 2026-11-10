@@ -5,6 +5,18 @@ En production elle tourne sur le VPS derrière nginx, à l'adresse `https://api.
 
 ## Développement local
 
+### Le plus simple : API de démo en mémoire (rien à installer)
+
+```bash
+cd backend && npm install && npm run dev:memory
+```
+
+L'API démarre sur http://localhost:3000 avec une base MongoDB **en mémoire** (vidée à chaque arrêt), les contenus de départ et des comptes fictifs (mot de passe `demo-password`) : `admin@demo.local`, `agent@demo.local`, `hadiza@demo.local`. Aucun mail n'est envoyé : les codes de connexion et les liens « mot de passe oublié » s'affichent dans le terminal. Ne touche jamais la base de production, même si un `.env` existe. Le premier lancement télécharge une fois le binaire MongoDB (quelques minutes).
+
+Puis lancer le site dans un second terminal : `cd admin-web && npm install && npm run dev` → http://localhost:5173.
+
+### Avec une vraie base MongoDB locale
+
 ```bash
 cd backend
 cp .env.example .env      # puis renseigner MONGODB_URI et JWT_SECRET
