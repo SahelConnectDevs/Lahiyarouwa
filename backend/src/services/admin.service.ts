@@ -146,7 +146,13 @@ export async function getUser(userId: string) {
 export async function updateUser(
   adminId: string,
   userId: string,
-  input: { role?: Role; isActive?: boolean; relais?: string | null; secteur?: string | null },
+  input: {
+    role?: Role;
+    isActive?: boolean;
+    relais?: string | null;
+    secteur?: string | null;
+    email?: string | null;
+  },
 ): Promise<AdminUser> {
   if (adminId === userId && (input.isActive === false || (input.role && input.role !== 'admin'))) {
     throw AppError.forbidden('Vous ne pouvez pas retirer vos propres droits administrateur.');
@@ -168,11 +174,30 @@ export async function updateUser(
     }
   }
 
-  if (input.role === 'admin' && user.role !== 'admin' && !user.email) {
-    // La connexion admin exige un code envoyé à l'e-mail du compte.
-    throw AppError.validation('Données invalides.', {
-      role: 'Un administrateur doit avoir une adresse e-mail (le code de connexion y est envoyé).',
-    });
+  // Admins et agents se connectent par e-mail avec un code envoyé à cette
+  // adresse : leur compte doit en avoir une.
+  const nextRole = input.role ?? user.role;
+  const nextEmail = input.email === undefined ? (user.email ?? null) : input.email;
+  if (nextRole === 'admin' || nextRole === 'relais') {
+    if (input.email === null) {
+      throw AppError.validation('Données invalides.', {
+        email: "L'e-mail est obligatoire pour un administrateur ou un agent.",
+      });
+    }
+    if (input.role && input.role !== user.role && !nextEmail) {
+      throw AppError.validation('Données invalides.', {
+        role: `Renseignez d'abord l'e-mail de ce compte : ${
+          input.role === 'admin' ? 'un administrateur' : 'un agent'
+        } s'en sert pour se connecter et y reçoit son code.`,
+      });
+    }
+  }
+  if (
+    input.email &&
+    input.email !== user.email &&
+    (await User.exists({ email: input.email, _id: { $ne: user._id } }))
+  ) {
+    throw AppError.validation('Données invalides.', { email: 'Un compte existe déjà avec cet e-mail.' });
   }
 
   if (input.role !== undefined && input.role !== user.role) {
@@ -189,6 +214,11 @@ export async function updateUser(
     );
   }
   if (input.secteur !== undefined) user.set('secteur', input.secteur || undefined);
+  if (input.email !== undefined && input.email !== (user.email ?? null)) {
+    user.set('email', input.email || undefined);
+    // Les codes déjà envoyés à l'ancienne adresse ne servent plus.
+    await LoginChallenge.deleteMany({ user: user._id });
+  }
   if (input.isActive !== undefined && input.isActive !== user.isActive) {
     user.isActive = input.isActive;
     // Déconnecte immédiatement le compte désactivé sur tous ses appareils.

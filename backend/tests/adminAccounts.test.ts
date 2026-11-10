@@ -7,6 +7,7 @@ import {
   app,
   bearer,
   createAdmin,
+  lastLoginCode,
   loginAdmin,
   registerRelais,
   registerUser,
@@ -16,18 +17,18 @@ import {
 useTestDatabase();
 
 describe('POST /api/admin/users', () => {
-  it('crée un agent avec un mot de passe provisoire à 8 chiffres, utilisable pour se connecter', async () => {
+  it('crée une bénéficiaire avec un mot de passe provisoire à 8 chiffres, utilisable pour se connecter', async () => {
     const admin = await loginAdmin();
     const response = await request(app)
       .post('/api/admin/users')
       .set(bearer(admin.token))
-      .send({ name: 'Moussa', phone: '90 11 22 33', role: 'relais', secteur: 'Tillabéri' });
+      .send({ name: 'Awa', phone: '90 11 22 33', role: 'user', secteur: 'Tillabéri' });
 
     expect(response.status).toBe(201);
     expect(response.body.user).toMatchObject({
-      name: 'Moussa',
+      name: 'Awa',
       phone: '+22790112233',
-      role: 'relais',
+      role: 'user',
       secteur: 'Tillabéri',
       mustChangePassword: true,
       partageRelais: false,
@@ -177,5 +178,88 @@ describe('Garde-fous de rôle et de mot de passe', () => {
       .send({ currentPassword: 'secret1', newPassword: 'secret1' });
     expect(response.status).toBe(422);
     expect(response.body.errors).toHaveProperty('newPassword');
+  });
+});
+
+describe('Agents communautaires : e-mail et code de connexion', () => {
+  it("exige un e-mail pour créer un agent, puis l'agent se connecte par e-mail avec un code", async () => {
+    const admin = await loginAdmin();
+    const noEmail = await request(app)
+      .post('/api/admin/users')
+      .set(bearer(admin.token))
+      .send({ name: 'Moussa', phone: '90121212', role: 'relais' });
+    expect(noEmail.status).toBe(422);
+    expect(noEmail.body.errors).toHaveProperty('email');
+
+    const created = await request(app)
+      .post('/api/admin/users')
+      .set(bearer(admin.token))
+      .send({ name: 'Moussa', phone: '90121212', role: 'relais', email: 'Moussa@Example.com' });
+    expect(created.status).toBe(201);
+    expect(created.body.user.email).toBe('moussa@example.com');
+
+    const first = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'moussa@example.com', password: created.body.temporaryPassword });
+    expect(first.body).toMatchObject({ mfaRequired: true });
+    expect(first.body.token).toBeUndefined();
+
+    const verified = await request(app)
+      .post('/api/auth/login/verify')
+      .send({ challengeToken: first.body.challengeToken, code: lastLoginCode('moussa@example.com') });
+    expect(verified.status).toBe(200);
+    expect(verified.body.user).toMatchObject({ role: 'relais', mustChangePassword: true });
+
+    // Le code est aussi demandé si l'agent saisit son téléphone.
+    const byPhone = await request(app)
+      .post('/api/auth/login')
+      .send({ phone: '90121212', password: created.body.temporaryPassword });
+    expect(byPhone.body).toMatchObject({ mfaRequired: true });
+  });
+
+  it("permet à l'admin d'ajouter un e-mail à un agent existant, mais pas de le retirer", async () => {
+    const admin = await loginAdmin();
+    const agent = await registerRelais();
+
+    const added = await request(app)
+      .patch(`/api/admin/users/${agent.userId}`)
+      .set(bearer(admin.token))
+      .send({ email: 'agent@example.com' });
+    expect(added.status).toBe(200);
+    expect(added.body.email).toBe('agent@example.com');
+
+    const removed = await request(app)
+      .patch(`/api/admin/users/${agent.userId}`)
+      .set(bearer(admin.token))
+      .send({ email: null });
+    expect(removed.status).toBe(422);
+    expect(removed.body.errors).toHaveProperty('email');
+  });
+
+  it('refuse de passer un compte sans e-mail en agent, et un e-mail déjà utilisé', async () => {
+    const admin = await loginAdmin();
+    const user = await registerUser();
+    const promote = await request(app)
+      .patch(`/api/admin/users/${user.userId}`)
+      .set(bearer(admin.token))
+      .send({ role: 'relais' });
+    expect(promote.status).toBe(422);
+    expect(promote.body.errors).toHaveProperty('role');
+
+    // E-mail + rôle dans la même requête : accepté.
+    const both = await request(app)
+      .patch(`/api/admin/users/${user.userId}`)
+      .set(bearer(admin.token))
+      .send({ role: 'relais', email: 'nouvel-agent@example.com' });
+    expect(both.status).toBe(200);
+    expect(both.body).toMatchObject({ role: 'relais', email: 'nouvel-agent@example.com' });
+
+    const other = await registerUser();
+    const dup = await request(app)
+      .patch(`/api/admin/users/${other.userId}`)
+      .set(bearer(admin.token))
+      .send({ email: 'nouvel-agent@example.com' });
+    expect(dup.status).toBe(422);
+    expect(dup.body.errors).toHaveProperty('email');
   });
 });

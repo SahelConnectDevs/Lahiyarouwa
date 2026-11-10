@@ -174,11 +174,11 @@ export function LoginPage() {
               autoCapitalize="none"
               spellCheck={false}
               required
-              placeholder="admin@… ou 90 12 34 56"
+              placeholder="nom@exemple.com"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
             />
-            <small className="hint">Administrateurs : e-mail. Agents communautaires : numéro de téléphone.</small>
+            <small className="hint">Un code de vérification vous sera envoyé par e-mail.</small>
           </label>
           <label className="field">
             <span>Mot de passe</span>

@@ -35,6 +35,7 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
   const [isActive, setIsActive] = useState(user.isActive);
   const [relais, setRelais] = useState(user.relais ?? '');
   const [secteur, setSecteur] = useState(user.secteur ?? '');
+  const [email, setEmail] = useState(user.email ?? '');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ tone: 'success' | 'error'; text: string } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -45,7 +46,8 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
     role !== user.role ||
     isActive !== user.isActive ||
     relais !== (user.relais ?? '') ||
-    secteur !== (user.secteur ?? '');
+    secteur !== (user.secteur ?? '') ||
+    email.trim() !== (user.email ?? '');
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -57,6 +59,7 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
     if (isActive !== user.isActive) body.isActive = isActive;
     if (relais !== (user.relais ?? '')) body.relais = relais || null;
     if (secteur !== (user.secteur ?? '')) body.secteur = secteur.trim() || null;
+    if (email.trim() !== (user.email ?? '')) body.email = email.trim() || null;
     try {
       await api<AdminUser>(`/admin/users/${user.id}`, { method: 'PATCH', body });
       setMessage({ tone: 'success', text: 'Modifications enregistrées.' });
@@ -196,6 +199,20 @@ function UserDetail({ user, onSaved }: { user: AdminUserDetail; onSaved(): void 
           )}
 
           <label className="field">
+            <span>E-mail{role === 'relais' || role === 'admin' ? ' *' : ''}</span>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            {(role === 'relais' || role === 'admin') && (
+              <small className="hint">Identifiant de connexion à l’espace web : le code de connexion y est envoyé.</small>
+            )}
+            {role === 'relais' && !user.email && (
+              <small className="hint hint-warning">
+                Sans e-mail, cet agent se connecte avec son téléphone et sans code. Ajoutez son e-mail.
+              </small>
+            )}
+            {fieldErrors.email && <small className="field-error">{fieldErrors.email}</small>}
+          </label>
+
+          <label className="field">
             <span>Secteur / zone</span>
             <input
               value={secteur}
@@ -322,7 +339,11 @@ function ResetPasswordModal({ open, user, onClose }: { open: boolean; user: Admi
     <Modal title="Réinitialiser le mot de passe" open={open} onClose={close}>
       {password ? (
         <>
-          <TemporaryPassword name={user.name} phone={user.phone ?? user.email} password={password} />
+          <TemporaryPassword
+            name={user.name}
+            login={user.role === 'user' ? (user.phone ?? user.email) : (user.email ?? user.phone)}
+            password={password}
+          />
           <div className="form-actions">
             <button type="button" className="btn btn-primary" onClick={close}>
               J’ai noté le mot de passe

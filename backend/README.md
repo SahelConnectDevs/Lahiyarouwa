@@ -43,7 +43,7 @@ En cas d'erreur, la réponse a toujours la forme `{ message, errors? }`. Le cham
 
 **Mot de passe provisoire** : un compte créé ou réinitialisé par un admin a `mustChangePassword: true` dans `user` jusqu'à ce qu'il change son mot de passe (`POST /auth/me/password`). Les clients doivent alors imposer l'écran de changement : c'est fait dans admin-web, pas encore dans l'app mobile.
 
-**Double authentification des admins** : un mot de passe admin correct ne donne pas de token. Un code à 6 chiffres est envoyé à l'e-mail de connexion du compte (valable 10 minutes, usage unique). Au bout de 5 codes faux, il faut ressaisir le mot de passe. Les codes et les jetons ne sont stockés que hachés (collection `loginchallenges`, purgée automatiquement à expiration). Les comptes `user` et `relais` ne sont pas concernés.
+**Double authentification des admins** : un mot de passe admin correct ne donne pas de token. Un code à 6 chiffres est envoyé à l'e-mail de connexion du compte (valable 10 minutes, usage unique). Au bout de 5 codes faux, il faut ressaisir le mot de passe. Les codes et les jetons ne sont stockés que hachés (collection `loginchallenges`, purgée automatiquement à expiration). Les agents communautaires (`relais`) ont la même double authentification dès que leur compte a un e-mail : il est obligatoire à leur création et pour passer un compte agent. Les bénéficiaires (`user`) ne sont pas concernées.
 
 Le numéro de téléphone est normalisé : `90 12 34 56`, `+227 90123456` et `0022790123456` désignent tous le compte `+22790123456`.
 

@@ -28,9 +28,14 @@ export interface TwoFactorChallenge {
   resendIn: number;
 }
 
-/** La double authentification est exigée pour les comptes administrateurs. */
+/**
+ * Double authentification exigée pour les admins et pour les agents
+ * communautaires qui ont un e-mail (ils voient des données de santé). Un
+ * agent créé avant l'obligation d'e-mail garde la connexion par téléphone
+ * sans code tant qu'aucun e-mail n'est renseigné sur son compte.
+ */
 export function requiresTwoFactor(user: UserDocument): boolean {
-  return user.role === 'admin';
+  return user.role === 'admin' || (user.role === 'relais' && Boolean(user.email));
 }
 
 function digest(value: string): string {
@@ -64,11 +69,9 @@ async function sendCode(user: UserDocument, code: string): Promise<void> {
  */
 export async function startChallenge(user: UserDocument): Promise<TwoFactorChallenge> {
   if (!user.email) {
-    // Un admin est toujours créé avec un e-mail (script create-admin) ; un
-    // compte promu admin sans e-mail ne peut pas recevoir de code.
-    throw AppError.forbidden(
-      "Ce compte administrateur n'a pas d'adresse e-mail pour recevoir le code de connexion.",
-    );
+    // Un admin est toujours créé avec un e-mail (script create-admin) et
+    // l'admin-web l'exige pour promouvoir admin ou agent.
+    throw AppError.forbidden("Ce compte n'a pas d'adresse e-mail pour recevoir le code de connexion.");
   }
   const code = newCode();
   const challengeToken = randomBytes(32).toString('base64url');

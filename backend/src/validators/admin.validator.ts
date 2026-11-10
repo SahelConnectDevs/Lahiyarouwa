@@ -38,6 +38,17 @@ export const listUsersValidator = [
 
 export const updateUserValidator = [
   body('role').optional().isIn(ROLES).withMessage('Rôle invalide.'),
+  // null (ou '') retire l'e-mail ; refusé pour un admin ou un agent (service).
+  body('email')
+    .optional()
+    .custom(
+      (value) =>
+        value === null ||
+        value === '' ||
+        (typeof value === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())),
+    )
+    .withMessage('E-mail invalide.')
+    .customSanitizer((value: string | null) => (value ? value.trim().toLowerCase() : null)),
   body('isActive').optional().isBoolean({ strict: true }).withMessage('isActive doit valoir true ou false.'),
   // null retire l'agent assigné.
   nullable('relais', (v) => typeof v === 'string' && /^[a-f\d]{24}$/i.test(v), 'Agent invalide.'),
@@ -52,8 +63,13 @@ export const updateUserValidator = [
 export const createUserValidator = [
   body('name').isString().trim().notEmpty().withMessage('Le nom est requis.').isLength({ max: 100 }),
   phoneField('phone'),
-  body('email').optional({ values: 'falsy' }).isEmail().withMessage('E-mail invalide.').trim().toLowerCase(),
   body('role').isIn(['user', 'relais']).withMessage('Rôle invalide (bénéficiaire ou agent).'),
+  // Obligatoire pour un agent : il se connecte avec, et reçoit son code de connexion.
+  body('email')
+    .if(body('role').equals('relais'))
+    .exists({ values: 'falsy' })
+    .withMessage("L'e-mail est obligatoire pour un agent (il s'en sert pour se connecter)."),
+  body('email').optional({ values: 'falsy' }).isEmail().withMessage('E-mail invalide.').trim().toLowerCase(),
   body('secteur')
     .optional({ values: 'falsy' })
     .isString()

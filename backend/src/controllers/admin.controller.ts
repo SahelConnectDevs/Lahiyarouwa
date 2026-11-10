@@ -36,7 +36,13 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const user = await adminService.updateUser(
     currentUserId(req),
     routeParam(req, 'id'),
-    bodyData<{ role?: Role; isActive?: boolean; relais?: string | null; secteur?: string | null }>(req),
+    bodyData<{
+      role?: Role;
+      isActive?: boolean;
+      relais?: string | null;
+      secteur?: string | null;
+      email?: string | null;
+    }>(req),
   );
   res.status(200).json(user);
 });

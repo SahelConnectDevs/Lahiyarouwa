@@ -9,7 +9,16 @@ import { ErrorBox, Modal } from './ui';
  * Mot de passe provisoire affiché une seule fois (création de compte ou
  * réinitialisation), avec bouton de copie et consignes de transmission.
  */
-export function TemporaryPassword({ name, phone, password }: { name: string; phone: string | null; password: string }) {
+export function TemporaryPassword({
+  name,
+  login,
+  password,
+}: {
+  name: string;
+  /** Identifiant de connexion à rappeler (e-mail ou téléphone). */
+  login: string | null;
+  password: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -26,10 +35,10 @@ export function TemporaryPassword({ name, phone, password }: { name: string; pho
     <div className="temp-password">
       <p>
         Mot de passe provisoire de <strong>{name}</strong>
-        {phone && (
+        {login && (
           <>
             {' '}
-            (connexion avec le <strong className="nowrap">{phone}</strong>)
+            (identifiant : <strong className="nowrap">{login}</strong>)
           </>
         )}{' '}
         :
@@ -122,7 +131,11 @@ function CreateUserForm({
         <div className="notice notice-success" role="status">
           Compte créé.
         </div>
-        <TemporaryPassword name={created.user.name} phone={created.user.phone} password={created.temporaryPassword} />
+        <TemporaryPassword
+          name={created.user.name}
+          login={created.user.role === 'relais' ? created.user.email : created.user.phone}
+          password={created.temporaryPassword}
+        />
         <div className="form-actions">
           <button type="button" className="btn btn-primary" onClick={() => onCreated(created)}>
             J’ai noté le mot de passe
@@ -164,8 +177,11 @@ function CreateUserForm({
           {errors.phone && <small className="field-error">{errors.phone}</small>}
         </label>
         <label className="field">
-          <span>E-mail (facultatif)</span>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <span>{role === 'relais' ? 'E-mail *' : 'E-mail (facultatif)'}</span>
+          <input type="email" value={email} required={role === 'relais'} onChange={(e) => setEmail(e.target.value)} />
+          {role === 'relais' && (
+            <small className="hint">L’agent s’en sert pour se connecter ; son code de connexion y est envoyé.</small>
+          )}
           {errors.email && <small className="field-error">{errors.email}</small>}
         </label>
         <label className="field field-wide">
@@ -201,7 +217,8 @@ function CreateUserForm({
         <button type="button" className="btn" onClick={onClose}>
           Annuler
         </button>
-        <button type="submit" className="btn btn-primary" disabled={saving || !name.trim() || !phone.trim()}>
+        <button type="submit" className="btn btn-primary" disabled={saving || !name.trim() || !phone.trim() || (role === 'relais' && !email.trim())}
+        >
           {saving ? 'Création…' : 'Créer le compte'}
         </button>
       </div>

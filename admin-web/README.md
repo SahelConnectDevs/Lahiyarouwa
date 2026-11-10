@@ -18,8 +18,8 @@ En production : **https://admin.lahiyarouwadayaro.com** (nginx sur le même VPS 
 
 ## Espace agent communautaire
 
-Les agents (rôle `relais`) se connectent sur le même site avec leur **numéro de
-téléphone** et leur mot de passe. Ils arrivent sur un espace à part, pensé pour
+Les agents (rôle `relais`) se connectent sur le même site avec leur **e-mail**,
+leur mot de passe et un code reçu par mail (comme les admins). Ils arrivent sur un espace à part, pensé pour
 le téléphone :
 
 | Écran | API | Rôle |

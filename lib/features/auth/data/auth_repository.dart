@@ -50,12 +50,12 @@ class AuthRepository {
 
   Future<UserModel> _storeSession(dynamic body) async {
     final data = body as Map<String, dynamic>;
-    // Compte administrateur : l'API attend un code envoyé par e-mail (double
-    // authentification) au lieu de renvoyer un token. L'administration se
-    // fait sur l'espace web, pas dans l'app.
+    // Compte administrateur ou agent communautaire : l'API attend un code
+    // envoyé par e-mail (double authentification) au lieu de renvoyer un
+    // token. Ces comptes utilisent l'espace web, pas l'app.
     if (data['mfaRequired'] == true) {
       throw const ServerException(
-        'Ce compte administrateur se connecte sur admin.lahiyarouwadayaro.com, pas dans l’application.',
+        'Ce compte se connecte sur admin.lahiyarouwadayaro.com avec son e-mail, pas dans l’application.',
       );
     }
     await _apiClient.saveToken(data['token'] as String);

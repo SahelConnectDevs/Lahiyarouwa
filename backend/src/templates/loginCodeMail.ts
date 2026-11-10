@@ -38,7 +38,7 @@ function formatNiger(date: Date): string {
   return `${day} à ${time}`;
 }
 
-/** Mail du code de double authentification envoyé aux admins. */
+/** Mail du code de double authentification (admins et agents communautaires). */
 export function loginCodeMail(input: {
   to: string;
   name: string;
@@ -78,7 +78,7 @@ export function loginCodeMail(input: {
     </td></tr>
     <tr><td style="padding:16px 32px 0;font-family:Arial,Helvetica,sans-serif;color:${C.text}">
       <h1 style="margin:0 0 12px;font-size:22px;line-height:1.3;text-align:center">Votre code de connexion</h1>
-      <p style="margin:0;font-size:15px;line-height:1.6;color:${C.muted};text-align:center">Bonjour ${name}, saisissez ce code pour terminer votre connexion à l'administration.</p>
+      <p style="margin:0;font-size:15px;line-height:1.6;color:${C.muted};text-align:center">Bonjour ${name}, saisissez ce code pour terminer votre connexion à votre espace.</p>
     </td></tr>
     <tr><td align="center" style="padding:24px 12px 8px">
       <table role="presentation" cellpadding="0" cellspacing="0" style="background:${C.pinkSoft};border-radius:14px">
@@ -116,7 +116,7 @@ export function loginCodeMail(input: {
   const text = [
     `Bonjour ${input.name},`,
     '',
-    `Votre code de connexion à l'administration ${BRAND} est : ${code}`,
+    `Votre code de connexion à votre espace ${BRAND} est : ${code}`,
     '',
     `Il est valable ${minutes} minutes, pour une seule connexion.`,
     'Ne le communiquez à personne : notre équipe ne vous le demandera jamais.',

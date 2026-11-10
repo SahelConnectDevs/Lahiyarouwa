@@ -32,8 +32,9 @@ export function AgentsPage() {
       />
 
       <div className="notice notice-info">
-        Créez le compte ici puis transmettez à l’agent son mot de passe provisoire : il se connecte dans l’application
-        avec son numéro de téléphone. Un compte déjà inscrit peut aussi devenir agent depuis sa fiche dans{' '}
+        Créez le compte ici avec l’e-mail de l’agent, puis transmettez-lui son mot de passe provisoire : il se connecte
+        sur ce site avec son e-mail et reçoit un code de vérification par mail. Un compte déjà inscrit peut aussi devenir
+        agent depuis sa fiche dans{' '}
         <Link to="/utilisateurs">Utilisatrices et comptes</Link>.
       </div>
 
